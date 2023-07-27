@@ -21,7 +21,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.0.1-1.19.2'
+version = '0.1.0-1.19.2'
 group = 'com.cravencraft.betterparagliders' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'betterparagliders'
 
@@ -92,13 +92,14 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.2.0'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     implementation fg.deobf('curse.maven:paragliders-289240:4478230')
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim_version}")
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
     implementation fg.deobf('maven.modrinth:better-combat:1.7.1+1.19-forge')
+    implementation fg.deobf('maven.modrinth:combat-roll:1.1.5+1.19-forge')
     implementation fg.deobf('curse.maven:architectury-419699:4555749')
-    implementation fg.deobf('curse.maven:simplyswords-659887:4553225')
 }
 
 jar {
@@ -110,7 +111,8 @@ jar {
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "betterparagliderssareus",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConnector"          : "net.cravencraft.betterparagliders.MixinConnector"
         ])
     }
 }

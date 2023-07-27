@@ -1,5 +1,6 @@
 package net.cravencraft.betterparagliders.events;
 
+import com.google.gson.JsonParser;
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.UpdatedClientPlayerMovement;
 import net.cravencraft.betterparagliders.capabilities.UpdatedServerPlayerMovement;
@@ -17,6 +18,8 @@ import tictim.paraglider.capabilities.ClientPlayerMovement;
 import tictim.paraglider.capabilities.PlayerMovement;
 import tictim.paraglider.capabilities.ServerPlayerMovement;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.lang.reflect.Field;
 
 @Mod.EventBusSubscriber(modid = BetterParaglidersMod.MOD_ID)
@@ -86,6 +89,7 @@ public final class BetterParaglidersEventHandler {
      */
     @SubscribeEvent
     public static void LivingAttackEvent(LivingAttackEvent event) {
+        event.getSource();
         if (UpdatedServerPlayerMovement.instance != null) {
             if (UpdatedServerPlayerMovement.instance.serverPlayerMovement.player.isDamageSourceBlocked(event.getSource())) {
                 BetterParaglidersMod.LOGGER.info("BLOCK AMOUNT THE OG WAY: " + event.getAmount());
@@ -124,4 +128,8 @@ public final class BetterParaglidersEventHandler {
         fieldValue.set(false);
         field.set(null, fieldValue);
     }
+
+//    private static void modifyCombatRollEnchantmentDescriptions() throws FileNotFoundException {
+//        JsonParser.parseReader(new FileReader(""));
+//    }
 }

@@ -2,20 +2,28 @@ package net.cravencraft.betterparagliders.capabilities;
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
 import net.bettercombat.logic.PlayerAttackProperties;
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
+import net.combatroll.api.EntityAttributes_CombatRoll;
+import net.combatroll.client.MinecraftClientExtension;
+import net.combatroll.client.RollManager;
 import net.cravencraft.betterparagliders.config.UpdatedModCfg;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import tictim.paraglider.ParagliderMod;
 import tictim.paraglider.capabilities.ClientPlayerMovement;
+
+import java.lang.reflect.Field;
+
+import static net.combatroll.api.EntityAttributes_CombatRoll.Type.COUNT;
 
 public class UpdatedClientPlayerMovement extends UpdatedPlayerMovement {
 
     public static final int BASE_ATTACK_DAMAGE = 5;
     public static UpdatedClientPlayerMovement instance;
     public ClientPlayerMovement clientPlayerMovement;
+    private RollManager rollManager;
     //TODO: Need to figure out if I really need this when I implement other stamina draining skills.
     private int totalMeleeStaminaCost;
     private int totalBlockStaminaCost;
@@ -24,6 +32,7 @@ public class UpdatedClientPlayerMovement extends UpdatedPlayerMovement {
     public UpdatedClientPlayerMovement(ClientPlayerMovement clientPlayerMovement) {
         super(clientPlayerMovement);
         this.clientPlayerMovement = clientPlayerMovement;
+        this.rollManager = ((MinecraftClientExtension)Minecraft.getInstance()).getRollManager();
         this.comboCount = 0;
         instance = this;
     }
@@ -35,8 +44,25 @@ public class UpdatedClientPlayerMovement extends UpdatedPlayerMovement {
     @Override
     public void update() {
         calculateTotalStaminaCost();
+        try {
+            calculateRollStaminaCost();
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
         updateStamina();
+        disableRoll();
         addEffects();
+    }
+
+    public void disableRoll() {
+        if(!playerMovement.player.isCreative()&&playerMovement.isDepleted()){
+            this.rollManager.isEnabled = false;
+        }
+        else {
+            this.rollManager.isEnabled = true;
+        }
     }
 
     /**
@@ -48,7 +74,6 @@ public class UpdatedClientPlayerMovement extends UpdatedPlayerMovement {
         // Where all stamina draining methods will go
         calculateMeleeStaminaCost();
         calculateRangeStaminaCost();
-//        calculateBlockStaminaCost(event.getAmount());
 
         if (this.totalActionStaminaCost > 0) {
             this.totalActionStaminaCost--;
@@ -117,24 +142,39 @@ public class UpdatedClientPlayerMovement extends UpdatedPlayerMovement {
             if (reachFactor > 3) {
                 reachFactor = 3;
             }
-            BetterParaglidersMod.LOGGER.info("REACH FACTOR: " + reachFactor);
-            BetterParaglidersMod.LOGGER.info("DAMAGE FACTOR: " + damageFactor);
 
             this.totalActionStaminaCost = (int) ((damageFactor * reachFactor));
-            BetterParaglidersMod.LOGGER.info("TOTAL STAMINA COST: " + this.totalActionStaminaCost);
-//            this.totalActionStaminaCost += this.totalMeleeStaminaCost;
         }
     }
 
     private void calculateRangeStaminaCost() {
         Player player = clientPlayerMovement.player;
         if (player.getUseItem().getItem() instanceof  ProjectileWeaponItem projectileWeaponItem) {
-            BetterParaglidersMod.LOGGER.info("WEAPON DAMAGE: " + player.getUseItem().getRarity());
             ParagliderMod.LOGGER.info( (int) player.getCurrentItemAttackStrengthDelay());
 
 
             // TODO: Def gonna make some static final vars
             this.totalActionStaminaCost = UpdatedModCfg.baseRangeStaminaCost();
+        }
+    }
+
+    /**
+     * Calculates the amount of stamina a roll will cost. Factors in weight and enchantments as well.
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     */
+    private void calculateRollStaminaCost() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException {
+        Field availableRollsField = RollManager.class.getDeclaredField("availableRolls");
+        availableRollsField.setAccessible(true);
+        //TODO: Put fire out after x amount of rolls?
+        if (this.rollManager.isRolling()) {
+            double enchantmentStaminaReduction = (1 - (EntityAttributes_CombatRoll.getAttributeValue(clientPlayerMovement.player, COUNT) * 0.05));
+            int baseCost = 10;
+            int armorCost = (this.clientPlayerMovement.player.getArmorValue() > 10) ? this.clientPlayerMovement.player.getArmorValue() : baseCost;
+            double rawStaminaCost = armorCost * enchantmentStaminaReduction;
+            this.totalActionStaminaCost = (int) (rawStaminaCost);
         }
     }
 }

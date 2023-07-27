@@ -1,4 +1,7 @@
 package net.cravencraft.betterparagliders;
+import me.shedaniel.autoconfig.AutoConfig;
+import net.combatroll.CombatRoll;
+import net.combatroll.config.ServerConfigWrapper;
 import net.cravencraft.betterparagliders.capabilities.UpdatedPlayerMovement;
 import net.cravencraft.betterparagliders.client.overlay.NewStaminaWheelOverlay;
 import net.cravencraft.betterparagliders.config.UpdatedModCfg;

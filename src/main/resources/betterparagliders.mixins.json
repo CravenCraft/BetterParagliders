@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "net.cravencraft.betterparagliders.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "HudRenderHelperMixin",
+    "RollManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
