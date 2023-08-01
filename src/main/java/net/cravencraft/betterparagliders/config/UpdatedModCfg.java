@@ -21,9 +21,9 @@ public final class UpdatedModCfg {
 	private static ForgeConfigSpec.BooleanValue RUNNING_CONSUMES_STAMINA;
 	private static ForgeConfigSpec.IntValue BASE_MELEE_STAMINA_COST;
 	private static ForgeConfigSpec.IntValue BASE_RANGE_STAMINA_COST;
+	private static ForgeConfigSpec.DoubleValue STRENGTH_PENALTY;
 	private static ForgeConfigSpec.DoubleValue TIER_PENALTY;
 	private static ForgeConfigSpec.DoubleValue TWO_HANDED_PENALTY;
-
 
 	public static boolean paraglidingConsumesStamina() {
 		return PARAGLIDING_CONSUMES_STAMINA.get();}
@@ -37,6 +37,10 @@ public final class UpdatedModCfg {
 	public static double tierPenalty() { return TIER_PENALTY.get(); }
 	public static double twoHandedPenalty() { return TWO_HANDED_PENALTY.get(); }
 
+	public static double strengthPenalty() {
+		return STRENGTH_PENALTY.get();
+	}
+
 
 	public static void init(){
 		Builder server = new Builder();
@@ -45,6 +49,7 @@ public final class UpdatedModCfg {
 		RUNNING_CONSUMES_STAMINA = server.comment("Actions other than paragliding or ascending will consume stamina.").define("runningAndSwimmingConsumesStamina", true);
 		BASE_MELEE_STAMINA_COST = server.comment("The base amount of stamina a melee attack will cost (1 - 100).").defineInRange("baseMeleeStaminaCost", 1, 0, 100);
 		BASE_RANGE_STAMINA_COST = server.comment("The base amount of stamina a range attack will cost (1 - 100).").defineInRange("baseRangeStaminaCost", 5, 0, 100);
+		STRENGTH_PENALTY = server.comment("How much of a percentage penalty the player's strength will determine.").defineInRange("strengthPenalty", 1.25, 1.0, 2.0);
 		TIER_PENALTY = server.comment("How much of a percentage penalty using a two handed weapon will cost (1.0 - 10.0).").defineInRange("tierPenalty", 2.0, 1.0, 10.0);
 		TWO_HANDED_PENALTY = server.comment("How much of a percentage penalty using a two handed weapon will cost (1.0 - 10.0).").defineInRange("twoHandedPenalty", 1.15, 1.0, 10.0);
 

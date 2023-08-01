@@ -3,7 +3,13 @@
   "minVersion": "0.7",
   "package": "net.cravencraft.betterparagliders.mixins",
   "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ServerPlayerMovementMixin",
+    "PlayerMovementMixin"
+  ],
   "client": [
+    "InGameStaminaWheelRendererMixin",
+    "ClientPlayerMovementMixin",
     "HudRenderHelperMixin",
     "RollManagerMixin"
   ],

@@ -1,6 +1,5 @@
 package net.cravencraft.betterparagliders.network;
 
-import net.cravencraft.betterparagliders.capabilities.UpdatedPlayerMovement;
 import net.minecraft.network.FriendlyByteBuf;
 
 /**
@@ -12,14 +11,6 @@ import net.minecraft.network.FriendlyByteBuf;
 public record SyncActionToClientMsg(int totalActionStaminaCost) {
     public static SyncActionToClientMsg read(FriendlyByteBuf buffer){
         return new SyncActionToClientMsg(buffer.readInt());
-    }
-
-    public SyncActionToClientMsg(UpdatedPlayerMovement playerMovement){
-        this(playerMovement.totalActionStaminaCost);
-    }
-
-    public void copyTo(UpdatedPlayerMovement playerMovement){
-        playerMovement.totalActionStaminaCost = totalActionStaminaCost;
     }
 
     public void write(FriendlyByteBuf buffer){

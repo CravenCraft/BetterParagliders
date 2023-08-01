@@ -1,7 +1,6 @@
 package net.cravencraft.betterparagliders.network;
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
-import net.cravencraft.betterparagliders.capabilities.UpdatedClientPlayerMovement;
-import net.cravencraft.betterparagliders.capabilities.UpdatedServerPlayerMovement;
+import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +11,8 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import tictim.paraglider.ModCfg;
 import tictim.paraglider.ParagliderMod;
+import tictim.paraglider.capabilities.ClientPlayerMovement;
+import tictim.paraglider.capabilities.PlayerMovement;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -40,12 +41,14 @@ public class ModNet {
         context.get().setPacketHandled(true);
         context.get().enqueueWork(() -> {
             ServerPlayer player = context.get().getSender();
+            PlayerMovement serverPlayerMovement = PlayerMovement.of(player);
             if(player==null){
                 ParagliderMod.LOGGER.error("Cannot handle SyncMovementMsg: Wrong side");
                 return;
             }
 
-            UpdatedServerPlayerMovement.instance.totalActionStaminaCost = msg.totalActionStaminaCost();
+            //TODO: Does this work?
+            ((PlayerMovementInterface) serverPlayerMovement).setTotalActionStaminaCostServerSide(msg.totalActionStaminaCost());
         });
     }
 
@@ -56,10 +59,12 @@ public class ModNet {
             ctx.get().setPacketHandled(true);
             LocalPlayer localPlayer = Minecraft.getInstance().player;
             if (localPlayer == null) return;
-            UpdatedClientPlayerMovement updatedClientPlayerMovement = UpdatedClientPlayerMovement.instance;
-            if (updatedClientPlayerMovement != null) {
+//            UpdatedClientPlayerMovement updatedClientPlayerMovement = (UpdatedClientPlayerMovement) UpdatedPlayerMovement.getInstance(localPlayer);
+            ClientPlayerMovement clientPlayerMovement = (ClientPlayerMovement) PlayerMovement.of(localPlayer);
+            if (clientPlayerMovement != null) {
                 if (ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Received {}", msg);
-                msg.copyTo(updatedClientPlayerMovement);
+//                msg.copyTo(clientPlayerMovement);
+                ((PlayerMovementInterface) clientPlayerMovement).setTotalActionStaminaCostClientSide(msg.totalActionStaminaCost());
             }
             else {
                 ParagliderMod.LOGGER.error("Couldn't handle packet {}, capability not found", msg);

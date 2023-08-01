@@ -1,14 +1,10 @@
 package net.cravencraft.betterparagliders;
-import me.shedaniel.autoconfig.AutoConfig;
-import net.combatroll.CombatRoll;
-import net.combatroll.config.ServerConfigWrapper;
-import net.cravencraft.betterparagliders.capabilities.UpdatedPlayerMovement;
-import net.cravencraft.betterparagliders.client.overlay.NewStaminaWheelOverlay;
+import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.config.UpdatedModCfg;
 import net.cravencraft.betterparagliders.network.ModNet;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,6 +25,7 @@ public class BetterParaglidersMod
     {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         Contents.registerEventHandlers(eventBus);
+        BetterParaglidersAttributes.registerEventHandlers(eventBus);
         UpdatedModCfg.init();
         ModNet.init();
 
@@ -37,12 +34,7 @@ public class BetterParaglidersMod
     }
 
     @SubscribeEvent
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(UpdatedPlayerMovement.class);
-    }
-
-    @SubscribeEvent
-    public static void registerGuiOverlays(RegisterGuiOverlaysEvent event){
-        event.registerAboveAll("stamina_wheel", new NewStaminaWheelOverlay());
+    public static void onEntityAttributeModification(EntityAttributeModificationEvent event){
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.STRENGTH_PENALTY.get());
     }
 }
