@@ -27,5 +27,10 @@ right click abilities) will now drain stamina. Here's a short list of everything
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
 into your minecraft mods folder along with this one, and everything should work fine!
 
+## V0.2.0
+- MASSIVE rework of the entire mod structure using mixins
+- Eliminated a LOT of unnecessary code
+- Fixed a MASSIVE bug in multiplayer where players would sometimes share the same stamina
+
 ## V0.1.0
 First official version of this mod. Has some pretty basic support of all basic attacks, blocking, and rolling.
