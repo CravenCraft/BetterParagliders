@@ -1,6 +1,5 @@
 package net.cravencraft.betterparagliders.mixins;
 
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,17 +17,13 @@ import tictim.paraglider.capabilities.PlayerState;
 @Mixin(PlayerMovement.class)
 public abstract class PlayerMovementMixin implements PlayerMovementInterface {
     @Shadow private PlayerState state;
-
     @Shadow private int recoveryDelay;
-
     @Shadow private boolean depleted;
-
     @Shadow private int stamina;
+    @Shadow public abstract int getMaxStamina();
+    @Shadow @Final public Player player;
     public int totalActionStaminaCost;
 
-    @Shadow public abstract int getMaxStamina();
-
-    @Shadow @Final public Player player;
 
     /**
      * TODO: Double check everything, but I think we have mixins working. DO make the updates
@@ -39,8 +34,6 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
      */
     @Inject(method = "updateStamina", at = @At("HEAD"), cancellable = true, remap = false)
     public void updateStamina(CallbackInfo ci) {
-//        this.totalActionStaminaCost = UpdatedPlayerMovement.instance.totalActionStaminaCost;
-        BetterParaglidersMod.LOGGER.info("PLAYER MOVEMENT MIXIN TOTAL STAMINA COST: " + totalActionStaminaCost);
         if (this.totalActionStaminaCost != 0 || this.state.isConsume()) {
             this.recoveryDelay = 10;
             int stateChange = (state.isConsume()) ? state.change() : -this.totalActionStaminaCost;
@@ -69,14 +62,15 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
         ci.cancel();
     }
 
+    @Override
     public int getTotalActionStaminaCost() {
         return this.totalActionStaminaCost;
     }
 
+    @Override
     public void setTotalActionStaminaCost(int totalActionStaminaCost) {
         this.totalActionStaminaCost = totalActionStaminaCost;
     }
-
 
     /**
      * Adds all the effects to be applied whenever the player's stamina is depleted.

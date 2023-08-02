@@ -18,6 +18,23 @@ right click abilities) will now drain stamina. Here's a short list of everything
     decrease the cooldown time even with the armor value factored in. Higher enchantment levels equals lower stamina 
     cost and cooldown times!
 
+## Other Features
+- **Config File** - The server config file for this mod will be in the same location as the one for Paragliders.
+  Here you can find various settings to increase or reduce the amount of stamina each action consumes. By default
+  everything is set to 1.0. Increasing to 2.0 will **double** the amount of stamina consumed, and decreasing to 0.0 will
+  remove stamina consumption from this action entirely.
+  > YOUR_WORLD_SAVE/serverconfig/betterparagliders-server.toml
+
+- **Attributes** - This mod contains multiple attributes. Each with a default value set to 1.0 and a range 
+  from 0.0 - 2.0. Increasing the value increases the stamina cost, and decreasing the value decreases stamina cost.
+  This was implemented in order for this mod to have compatibility with RPG mods such as 
+  [Pufferfish's Skills](https://www.curseforge.com/minecraft/mc-mods/puffish-skills) and
+  [Project MMO](https://www.curseforge.com/minecraft/mc-mods/project-mmo).
+  - **strength_factor**
+  - **range_factor**
+  - **block_factor**
+  - **roll_factor**
+
 ## Mod Dependencies
 - [Paragliders](https://www.curseforge.com/minecraft/mc-mods/paragliders/files/4478230) (1.19.2)
 - [Better Combat](https://www.curseforge.com/minecraft/mc-mods/better-combat-by-daedelus/files/4534619) (1.19.2)
@@ -26,6 +43,12 @@ right click abilities) will now drain stamina. Here's a short list of everything
 ## Install Instructions
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
 into your minecraft mods folder along with this one, and everything should work fine!
+
+## V0.2.1
+- Added attribute support! Can now be configured to work with RPG mods like Pufferfish's Skills or Project MMO
+- Updated the config. Paragliding and Running no longer need to be set here. Can set how much certain actions will drain
+    stamina (melee, ranged, blocking, rolling).
+- Combat Roll enchantments have been reworked to work with the new stamina system.
 
 ## V0.2.0
 - MASSIVE rework of the entire mod structure using mixins
