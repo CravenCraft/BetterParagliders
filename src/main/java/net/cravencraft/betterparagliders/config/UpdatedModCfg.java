@@ -17,48 +17,32 @@ import static net.cravencraft.betterparagliders.BetterParaglidersMod.MOD_ID;
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Bus.MOD)
 public final class UpdatedModCfg {
 	private UpdatedModCfg(){}
-	private static ForgeConfigSpec.BooleanValue PARAGLIDING_CONSUMES_STAMINA;
-	private static ForgeConfigSpec.BooleanValue RUNNING_CONSUMES_STAMINA;
-	private static ForgeConfigSpec.IntValue BASE_MELEE_STAMINA_COST;
-	private static ForgeConfigSpec.IntValue BASE_RANGE_STAMINA_COST;
-	private static ForgeConfigSpec.DoubleValue STRENGTH_PENALTY;
-	private static ForgeConfigSpec.DoubleValue TIER_PENALTY;
-	private static ForgeConfigSpec.DoubleValue TWO_HANDED_PENALTY;
 
-	public static boolean paraglidingConsumesStamina() {
-		return PARAGLIDING_CONSUMES_STAMINA.get();}
-	public static boolean runningConsumesStamina(){
-		return RUNNING_CONSUMES_STAMINA.get();
+	private static ForgeConfigSpec.DoubleValue MELEE_STAMINA_CONSUMPTION;
+	private static ForgeConfigSpec.DoubleValue RANGE_STAMINA_CONSUMPTION;
+	private static ForgeConfigSpec.DoubleValue BLOCK_STAMINA_CONSUMPTION;
+	private static ForgeConfigSpec.DoubleValue ROLL_STAMINA_CONSUMPTION;
+
+	public static double meleeStaminaConsumption() {
+		return MELEE_STAMINA_CONSUMPTION.get();
 	}
-
-	public static int baseMeleeStaminaCost() { return BASE_MELEE_STAMINA_COST.get(); }
-
-	public static int baseRangeStaminaCost() { return BASE_RANGE_STAMINA_COST.get(); }
-	public static double tierPenalty() { return TIER_PENALTY.get(); }
-	public static double twoHandedPenalty() { return TWO_HANDED_PENALTY.get(); }
-
-	public static double strengthPenalty() {
-		return STRENGTH_PENALTY.get();
+	public static double rangeStaminaConsumption() { return RANGE_STAMINA_CONSUMPTION.get(); }
+	public static double blockStaminaConsumption() {
+		return BLOCK_STAMINA_CONSUMPTION.get();
+	}
+	public static double rollStaminaConsumption() {
+		return ROLL_STAMINA_CONSUMPTION.get();
 	}
 
 
 	public static void init(){
 		Builder server = new Builder();
 		server.push("stamina");
-		PARAGLIDING_CONSUMES_STAMINA = server.comment("Paragliding and ascending will consume stamina.").define("paraglidingConsumesStamina", true);
-		RUNNING_CONSUMES_STAMINA = server.comment("Actions other than paragliding or ascending will consume stamina.").define("runningAndSwimmingConsumesStamina", true);
-		BASE_MELEE_STAMINA_COST = server.comment("The base amount of stamina a melee attack will cost (1 - 100).").defineInRange("baseMeleeStaminaCost", 1, 0, 100);
-		BASE_RANGE_STAMINA_COST = server.comment("The base amount of stamina a range attack will cost (1 - 100).").defineInRange("baseRangeStaminaCost", 5, 0, 100);
-		STRENGTH_PENALTY = server.comment("How much of a percentage penalty the player's strength will determine.").defineInRange("strengthPenalty", 1.25, 1.0, 2.0);
-		TIER_PENALTY = server.comment("How much of a percentage penalty using a two handed weapon will cost (1.0 - 10.0).").defineInRange("tierPenalty", 2.0, 1.0, 10.0);
-		TWO_HANDED_PENALTY = server.comment("How much of a percentage penalty using a two handed weapon will cost (1.0 - 10.0).").defineInRange("twoHandedPenalty", 1.15, 1.0, 10.0);
+		MELEE_STAMINA_CONSUMPTION = server.comment("How much more/less stamina is consumed from melee attacks.").defineInRange("meleeStaminaConsumption", 1.0, 0.0, 2.0);
+		RANGE_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.").defineInRange("rangeStaminaConsumption", 1.0, 0.0, 2.0);
+		BLOCK_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.").defineInRange("blockStaminaConsumption", 1.0, 0.0, 2.0);
+		ROLL_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.").defineInRange("rollStaminaConsumption", 1.0, 0.0, 2.0);
 
-		//TODO: Maybe add the updated state to include config options for your mod
-//		server.push("consumptions");
-//		for(PlayerState state : PlayerState.values()){
-//			state.setConfig(server.defineInRange(state.id+"StaminaConsumption", state.defaultChange, Integer.MIN_VALUE, Integer.MAX_VALUE));
-//		}
-//		server.pop();
 		server.pop();
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, server.build());
 	}

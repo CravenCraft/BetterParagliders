@@ -1,19 +1,19 @@
 package net.cravencraft.betterparagliders.mixins;
 
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
-import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
-import net.cravencraft.betterparagliders.config.UpdatedModCfg;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToClientMsg;
+import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraftforge.network.PacketDistributor;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,12 +25,11 @@ import tictim.paraglider.capabilities.ServerPlayerMovement;
 
 @Mixin(ServerPlayerMovement.class)
 public abstract class ServerPlayerMovementMixin extends PlayerMovement implements PlayerMovementInterface {
+    @Shadow @Final private ServerPlayer serverPlayer;
     private boolean actionStaminaNeedsSync;
     private int totalActionStaminaCost;
 
-    public ServerPlayerMovementMixin(Player player) {
-        super(player);
-    }
+    public ServerPlayerMovementMixin(Player player) { super(player); }
 
     @Inject(method = "update", at = @At(value = "HEAD"),  remap=false)
     public void update(CallbackInfo ci) {
@@ -56,7 +55,7 @@ public abstract class ServerPlayerMovementMixin extends PlayerMovement implement
      * @param amount
      */
     public void calculateBlockStaminaCost(float amount) {
-        this.totalActionStaminaCost = (int) amount;
+        this.totalActionStaminaCost = CalculateStaminaUtils.calculateBlockStaminaCost(this.serverPlayer, amount);
         this.actionStaminaNeedsSync = true;
     }
 
@@ -111,30 +110,5 @@ public abstract class ServerPlayerMovementMixin extends PlayerMovement implement
                 player.getCooldowns().addCooldown(shieldItem, (this.getMaxStamina() - currentRecoveredAmount) / recoveryRate);
             }
         }
-    }
-
-    private void initPlayerAttributes() {
-        //TODO: We'll create an ATTRIBUTES LIST AND JUST ITERATE THROUGH THEM.
-        AttributeInstance strengthAttribute = this.player.getAttribute(BetterParaglidersAttributes.STRENGTH_PENALTY.get());
-        BetterParaglidersMod.LOGGER.info("STRENGTH ATTRIBUTE ON RESPAWN: " + strengthAttribute.getValue());
-        BetterParaglidersMod.LOGGER.info("BASE VALUE: " + strengthAttribute.getBaseValue());
-        BetterParaglidersMod.LOGGER.info("DEFAULT VALUE: " + strengthAttribute.getAttribute().getDefaultValue());
-        BetterParaglidersMod.LOGGER.info("CURRENT STR VALUE: " + BetterParaglidersAttributes.currentStrengthPenalty);
-
-
-        //TODO: This will all move into the Attribute class and iterate through a list.
-        if (BetterParaglidersAttributes.currentStrengthPenalty == 0) {
-            strengthAttribute.setBaseValue(UpdatedModCfg.strengthPenalty());
-        }
-        else {
-            strengthAttribute.setBaseValue(BetterParaglidersAttributes.currentStrengthPenalty);
-        }
-//        else {
-//            strengthAttribute.setBaseValue(BetterParaglidersAttributes.currentStrengthPenalty);
-//        }
-//        if (strengthAttribute.getValue() == 0 && UpdatedModCfg.strengthPenalty() > 0) {
-//            BetterParaglidersMod.LOGGER.info("SETTING STR ATTRIBUTE");
-//            strengthAttribute.setBaseValue(UpdatedModCfg.strengthPenalty());
-//        }
     }
 }
