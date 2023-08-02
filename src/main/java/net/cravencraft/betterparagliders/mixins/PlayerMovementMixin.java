@@ -39,17 +39,10 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
             int stateChange = (state.isConsume()) ? state.change() : -this.totalActionStaminaCost;
             //TODO: Could change this to still drain if these don't both equal false. This fixes the need for
             //      the reflection method call!
-            if (!this.depleted) {
-                if (this.state.isParagliding()) {
-                    if (!ModCfg.paraglidingConsumesStamina()) {
-                        return;
-                    }
-                } else if (!ModCfg.runningConsumesStamina()) {
-                    return;
-                }
-
+            if (!this.depleted && ((state.isParagliding()
+                    ? ModCfg.paraglidingConsumesStamina()
+                    : ModCfg.runningConsumesStamina()) || this.totalActionStaminaCost != 0)) {
                 this.stamina = Math.max(0, this.stamina + stateChange);
-
             }
         }
         else if (this.recoveryDelay > 0) {

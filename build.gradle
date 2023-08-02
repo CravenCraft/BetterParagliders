@@ -21,7 +21,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.2.1-1.19.2'
+version = '0.2.1-1.18.2'
 group = 'com.cravencraft.betterparagliders' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'betterparagliders'
 
@@ -30,7 +30,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'official', version: '1.18.2'
     runs {
         client {
             workingDirectory project.file('run')
@@ -91,15 +91,15 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.2.0'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.2.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf('curse.maven:paragliders-289240:4478230')
+    implementation fg.deobf("curse.maven:paragliders-289240:4478246")
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim_version}")
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
-    implementation fg.deobf('maven.modrinth:better-combat:1.7.1+1.19-forge')
-    implementation fg.deobf('maven.modrinth:combat-roll:1.1.5+1.19-forge')
-    implementation fg.deobf('curse.maven:architectury-419699:4555749')
+    implementation fg.deobf('maven.modrinth:better-combat:1.6.2+1.18.2-forge')
+    implementation fg.deobf('maven.modrinth:combat-roll:1.1.5+1.18.2-forge')
+    implementation fg.deobf('curse.maven:architectury-419699:4521465')
 }
 
 jar {
