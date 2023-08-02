@@ -65,15 +65,9 @@ public abstract class InGameStaminaWheelRendererMixin extends StaminaWheelRender
                     this.addWheel(t, 0.0, t.getProportion(stamina), color);
                 } else {
                     this.addWheel(t, 0.0, t.getProportion(stamina), StaminaWheelConstants.IDLE);
-                    if (state.isConsume() || totalActionStaminaCost > 0) {
-                        if (state.isParagliding()) {
-                            if (!ModCfg.paraglidingConsumesStamina()) {
-                                continue;
-                            }
-                        } else if (!ModCfg.runningConsumesStamina()) {
-                            continue;
-                        }
-
+                    if (((state.isConsume()
+                            && (state.isParagliding() ? ModCfg.paraglidingConsumesStamina() : ModCfg.runningConsumesStamina())))
+                            || totalActionStaminaCost > 0) {
                         this.addWheel(t, t.getProportion(stamina + stateChange * 10), t.getProportion(stamina), color);
                     }
                 }

@@ -44,6 +44,9 @@ right click abilities) will now drain stamina. Here's a short list of everything
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
 into your minecraft mods folder along with this one, and everything should work fine!
 
+## V0.2.2
+- Fixed small bug that caused stamina not to drain unless **both** paragliding and running stamina was set to true.
+
 ## V0.2.1
 - Added attribute support! Can now be configured to work with RPG mods like Pufferfish's Skills or Project MMO
 - Updated the config. Paragliding and Running no longer need to be set here. Can set how much certain actions will drain
