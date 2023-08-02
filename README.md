@@ -38,7 +38,7 @@ right click abilities) will now drain stamina. Here's a short list of everything
 ## Mod Dependencies
 - [Paragliders](https://www.curseforge.com/minecraft/mc-mods/paragliders/files/4478246) (1.18.2)
 - [Better Combat](https://www.curseforge.com/minecraft/mc-mods/better-combat-by-daedelus/files/4428885) (1.18.2)
-- [Combat Roll]([https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428898](https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428900)) (1.18.2)
+- [Combat Roll]([https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428898](https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428900) (1.18.2)
 
 ## Install Instructions
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
