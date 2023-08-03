@@ -9,7 +9,6 @@ public interface PlayerMovementInterface {
      * ServerPlayerMovement
      */
     void setTotalActionStaminaCostServerSide(int totalActionStaminaCost);
-    void calculateBlockStaminaCost(float amount);
 
     /**
      * PlayerMovement
