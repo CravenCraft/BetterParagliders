@@ -44,6 +44,9 @@ right click abilities) will now drain stamina. Here's a short list of everything
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
 into your minecraft mods folder along with this one, and everything should work fine!
 
+## V0.2.3
+- Fixed major bug that caused the game to crash when on a server and blocking an attack.
+
 ## V0.2.2
 - Fixed small bug that caused stamina not to drain unless **both** paragliding and running stamina was set to true.
 
