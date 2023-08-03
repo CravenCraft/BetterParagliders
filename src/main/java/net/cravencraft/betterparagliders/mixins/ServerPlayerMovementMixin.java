@@ -4,16 +4,13 @@ import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToClientMsg;
-import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraftforge.network.PacketDistributor;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,7 +22,6 @@ import tictim.paraglider.capabilities.ServerPlayerMovement;
 
 @Mixin(ServerPlayerMovement.class)
 public abstract class ServerPlayerMovementMixin extends PlayerMovement implements PlayerMovementInterface {
-    @Shadow @Final private ServerPlayer serverPlayer;
     private boolean actionStaminaNeedsSync;
     private int totalActionStaminaCost;
 
@@ -45,18 +41,6 @@ public abstract class ServerPlayerMovementMixin extends PlayerMovement implement
 
     public void setTotalActionStaminaCostServerSide(int totalActionStaminaCost) {
         this.totalActionStaminaCost = totalActionStaminaCost;
-    }
-
-    /**
-     * TODO: Tweak this a bit more to drain some more stamina based on enemy attack power.
-     *       (Current reference: Zombie ~ 3 and Vindicator ~ 13)
-     * Calculates the amount of stamina to drain from blocking an attack.
-     *
-     * @param amount
-     */
-    public void calculateBlockStaminaCost(float amount) {
-        this.totalActionStaminaCost = CalculateStaminaUtils.calculateBlockStaminaCost(this.serverPlayer, amount);
-        this.actionStaminaNeedsSync = true;
     }
 
     /**
