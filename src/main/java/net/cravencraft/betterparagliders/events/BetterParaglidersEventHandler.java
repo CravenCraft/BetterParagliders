@@ -1,12 +1,15 @@
 package net.cravencraft.betterparagliders.events;
 
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
-import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.network.ModNet;
+import net.cravencraft.betterparagliders.network.SyncActionToClientMsg;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import tictim.paraglider.capabilities.PlayerMovement;
+import net.minecraftforge.network.PacketDistributor;
+import tictim.paraglider.ModCfg;
+import tictim.paraglider.ParagliderMod;
 
 @Mod.EventBusSubscriber(modid = BetterParaglidersMod.MOD_ID)
 public final class BetterParaglidersEventHandler {
@@ -21,8 +24,9 @@ public final class BetterParaglidersEventHandler {
     @SubscribeEvent
     public static void ShieldBlockEvent(ShieldBlockEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            ((PlayerMovementInterface) PlayerMovement.of(player)).calculateBlockStaminaCost(event.getBlockedDamage());
-            BetterParaglidersMod.LOGGER.info("BLOCKED DAMAGE: " + event.getBlockedDamage());
+            SyncActionToClientMsg msg = new SyncActionToClientMsg((int) event.getBlockedDamage());
+            if(ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Sending packet {} to player {}", msg, player);
+            ModNet.NET.send(PacketDistributor.PLAYER.with(() -> player), msg);
         }
     }
 }
