@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tictim.paraglider.ParagliderMod;
 import tictim.paraglider.capabilities.ClientPlayerMovement;
 import tictim.paraglider.capabilities.PlayerMovement;
 
@@ -58,7 +57,6 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
     }
 
     /**
-     * //TODO: ACCOUNT FOR SPRINTING. Probably need to do this in the UpdatedPlayerMovement class and the stamina wheel render class
      * Calculates the total stamina cost from all actions (melee and ranged attacks so far). If the action stamina cost
      * is greater than 0, then a message is sent to the server to update the server player.
      */

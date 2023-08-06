@@ -35,7 +35,9 @@ public class BetterParaglidersMod
 
     @SubscribeEvent
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event){
-        event.add(EntityType.PLAYER, BetterParaglidersAttributes.STRENGTH_FACTOR.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.MELEE_FACTOR.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.ONE_HANDED_FACTOR.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.TWO_HANDED_FACTOR.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.RANGE_FACTOR.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.BLOCK_FACTOR.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.ROLL_FACTOR.get());
