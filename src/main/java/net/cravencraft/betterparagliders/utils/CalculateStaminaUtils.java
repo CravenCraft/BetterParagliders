@@ -1,12 +1,15 @@
 package net.cravencraft.betterparagliders.utils;
 
+import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
 import net.combatroll.api.EntityAttributes_CombatRoll;
+import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.config.UpdatedModCfg;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SwordItem;
 
 import static net.combatroll.api.EntityAttributes_CombatRoll.Type.COUNT;
@@ -27,30 +30,34 @@ public class CalculateStaminaUtils {
     public static int calculateMeleeStaminaCost(LocalPlayer player, int currentCombo) {
         double tierFactor = 0;
         double attackDamageFactor = 1; // Default hand damage is 1
-        double reachFactor = PlayerAttackHelper.getCurrentAttack(player, currentCombo).attributes().attackRange();
+        AttackHand attackHand = PlayerAttackHelper.getCurrentAttack(player, currentCombo);
+        double reachFactor = attackHand.attributes().attackRange();
+        boolean isTwoHanded = attackHand.attributes().isTwoHanded();
+        Item weaponItem = attackHand.itemStack().getItem();
 
-        //TODO: Need to address dual wielding weapons. Uses the stamina of the first weapon.
-        //      Can be abused with a stronger weapon in the offhand so it won't consume as much stamina.
-        if (player.getMainHandItem().getItem() instanceof SwordItem swordItem) {
+
+        if (weaponItem instanceof SwordItem swordItem) {
             attackDamageFactor += swordItem.getDamage();
             tierFactor = swordItem.getTier().getAttackDamageBonus();
         }
-        else if (player.getMainHandItem().getItem() instanceof AxeItem axeItem) {
+        else if (weaponItem instanceof AxeItem axeItem) {
             attackDamageFactor += axeItem.getAttackDamage();
             tierFactor = axeItem.getTier().getAttackDamageBonus();
         }
 
-//        BetterParaglidersMod.LOGGER.info("TIER FACTOR: " + tierFactor);
-//        BetterParaglidersMod.LOGGER.info("REACH FACTOR: " + reachFactor);
-//        BetterParaglidersMod.LOGGER.info("ATTACK SPEED FACTOR: " + player.getCurrentItemAttackStrengthDelay());
-//        BetterParaglidersMod.LOGGER.info("STRENGTH FACTOR: " + player.getAttributeValue(BetterParaglidersAttributes.STRENGTH_FACTOR.get()));
-//        BetterParaglidersMod.LOGGER.info("ATTACK DAMAGE FACTOR: " + attackDamageFactor);
-//        BetterParaglidersMod.LOGGER.info("TOTAL STAMINA COST: " + ((attackDamageFactor * (tierFactor * 0.1 + 2)) + reachFactor));
-//        BetterParaglidersMod.LOGGER.info("TOTAL STAMINA COST ROUNDED: " + Math.ceil((((attackDamageFactor * (tierFactor * 0.1 + 2)) + reachFactor) * player.getAttributeValue(BetterParaglidersAttributes.STRENGTH_FACTOR.get()) * UpdatedModCfg.meleeStaminaConsumption())));
+        double totalStaminaDrain = ((attackDamageFactor * (tierFactor * 0.1 + 2) ) + reachFactor)
+                        * player.getAttributeValue(BetterParaglidersAttributes.MELEE_FACTOR.get())
+                        * UpdatedModCfg.meleeStaminaConsumption();
 
-        return (int) Math.ceil((((attackDamageFactor * (tierFactor * 0.1 + 2)) + reachFactor)
-                * player.getAttributeValue(BetterParaglidersAttributes.STRENGTH_FACTOR.get())
-                * UpdatedModCfg.meleeStaminaConsumption()));
+        if (isTwoHanded) {
+            totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_FACTOR.get())
+                        * UpdatedModCfg.twoHandedStaminaConsumption();
+        }
+        else {
+            totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_FACTOR.get())
+                        * UpdatedModCfg.oneHandedStaminaConsumption();
+        }
+        return (int) Math.ceil(totalStaminaDrain);
     }
 
     /**

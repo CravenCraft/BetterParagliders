@@ -20,9 +20,9 @@ right click abilities) will now drain stamina. Here's a short list of everything
 
 ## Other Features
 - **Config File** - The server config file for this mod will be in the same location as the one for Paragliders.
-  Here you can find various settings to increase or reduce the amount of stamina each action consumes. By default
+  Here you can find various settings to increase or reduce the amount of stamina each action consumes. By default,
   everything is set to 1.0. Increasing to 2.0 will **double** the amount of stamina consumed, and decreasing to 0.0 will
-  remove stamina consumption from this action entirely.
+  **completely remove** stamina consumption from this action entirely.
   > YOUR_WORLD_SAVE/serverconfig/betterparagliders-server.toml
 
 - **Attributes** - This mod contains multiple attributes. Each with a default value set to 1.0 and a range 
@@ -30,7 +30,9 @@ right click abilities) will now drain stamina. Here's a short list of everything
   This was implemented in order for this mod to have compatibility with RPG mods such as 
   [Pufferfish's Skills](https://www.curseforge.com/minecraft/mc-mods/puffish-skills) and
   [Project MMO](https://www.curseforge.com/minecraft/mc-mods/project-mmo).
-  - **strength_factor**
+  - **melee_factor**
+  - **one_handed_factor**
+  - **two_handed_factor**
   - **range_factor**
   - **block_factor**
   - **roll_factor**
@@ -43,6 +45,12 @@ right click abilities) will now drain stamina. Here's a short list of everything
 ## Install Instructions
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
 into your minecraft mods folder along with this one, and everything should work fine!
+
+## V0.2.4
+- Fixed a bug causing stamina to only drain running energy when sprinting and attacking.
+- Fixed a bug causing dual wielded weapons to only drain stamina from the main hand item.
+- Added more attribute support (**one_handed_factor** and **two_handed_factor**) and renamed **strength_factor** to **melee_factor**.
+- Added more config suppot (**oneHandedStaminaConsumption** and **twoHandedStaminaConsumption**).
 
 ## V0.2.3
 - Fixed major bug that caused the game to crash when on a server and blocking an attack.

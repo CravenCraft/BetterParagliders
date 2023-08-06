@@ -54,7 +54,7 @@ public abstract class InGameStaminaWheelRendererMixin extends StaminaWheelRender
             this.prevStamina = stamina;
             Color color = StaminaWheelConstants.DEPLETED_1.blend(StaminaWheelConstants.DEPLETED_2, StaminaWheelConstants.cycle(System.currentTimeMillis(), h.isDepleted() ? 600L : 300L));
             PlayerState state = h.getState();
-            int stateChange = (state.isConsume()) ? state.change() : -totalActionStaminaCost;
+            int stateChange = (state.isConsume()) ? state.change() - totalActionStaminaCost : -totalActionStaminaCost;
             StaminaWheelRenderer.WheelLevel[] var14 = StaminaWheelRenderer.WheelLevel.values();
             int var7 = var14.length;
 
