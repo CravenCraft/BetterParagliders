@@ -35,7 +35,7 @@ public abstract class ServerPlayerMovementMixin extends PlayerMovement implement
         }
 
         checkShieldDisable();
-        syncActionStamina();
+//        syncActionStamina();
         this.setTotalActionStaminaCost(this.totalActionStaminaCost);
     }
 
@@ -43,22 +43,22 @@ public abstract class ServerPlayerMovementMixin extends PlayerMovement implement
         this.totalActionStaminaCost = totalActionStaminaCost;
     }
 
-    /**
-     * Syncs the totalActionStaminaCost from the server to the client if the player performs an action that needs
-     * to be synced (blocking).
-     */
-    private void syncActionStamina() {
-        if (actionStaminaNeedsSync) {
-            if (this.player instanceof ServerPlayer serverPlayer) {
-                BetterParaglidersMod.LOGGER.info("INSIDE BLOCK STAMINA COST");
-                //TODO: Issue to fix
-                SyncActionToClientMsg msg = new SyncActionToClientMsg(this.totalActionStaminaCost);
-                if(ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Sending packet {} to player {}", msg, this.player);
-                ModNet.NET.send(PacketDistributor.PLAYER.with(() -> serverPlayer), msg);
-                actionStaminaNeedsSync = false;
-            }
-        }
-    }
+//    /**
+//     * Syncs the totalActionStaminaCost from the server to the client if the player performs an action that needs
+//     * to be synced (blocking).
+//     */
+//    private void syncActionStamina() {
+//        if (actionStaminaNeedsSync) {
+//            if (this.player instanceof ServerPlayer serverPlayer) {
+//                BetterParaglidersMod.LOGGER.info("INSIDE BLOCK STAMINA COST");
+//                //TODO: Issue to fix
+//                SyncActionToClientMsg msg = new SyncActionToClientMsg(this.totalActionStaminaCost);
+//                if(ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Sending packet {} to player {}", msg, this.player);
+//                ModNet.NET.send(PacketDistributor.PLAYER.with(() -> serverPlayer), msg);
+//                actionStaminaNeedsSync = false;
+//            }
+//        }
+//    }
 
     /**
      * Checks if the player is currently holding a shield item. If so, then the modifyShieldCooldown method is called

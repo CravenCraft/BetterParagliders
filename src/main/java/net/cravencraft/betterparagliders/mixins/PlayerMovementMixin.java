@@ -1,6 +1,8 @@
 package net.cravencraft.betterparagliders.mixins;
 
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -50,6 +52,18 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
         else if (this.state.change() > 0) {
             this.stamina = Math.min(this.getMaxStamina(), this.stamina + this.state.change());
         }
+
+        if (this.totalActionStaminaCost > 0) {
+            this.totalActionStaminaCost--;
+        }
+
+        if (this.player instanceof ServerPlayer) {
+            this.setTotalActionStaminaCostServerSide(this.totalActionStaminaCost);
+        }
+        else if (this.player instanceof LocalPlayer) {
+            this.setTotalActionStaminaCostClientSide(this.totalActionStaminaCost);
+        }
+
         addEffects();
         ci.cancel();
     }

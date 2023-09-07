@@ -3,6 +3,7 @@ package net.cravencraft.betterparagliders.mixins;
 import net.bettercombat.logic.PlayerAttackProperties;
 import net.combatroll.client.MinecraftClientExtension;
 import net.combatroll.client.RollManager;
+import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
@@ -20,6 +21,8 @@ import tictim.paraglider.capabilities.PlayerMovement;
 
 @Mixin(ClientPlayerMovement.class)
 public abstract class ClientPlayerMovementMixin extends PlayerMovement implements PlayerMovementInterface {
+
+    private boolean syncActionStamina;
     private int totalActionStaminaCost;
     private int comboCount;
     private RollManager rollManager;
@@ -36,17 +39,12 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
     @Inject(method = "update", at = @At(value = "HEAD"), remap=false)
     public void update(CallbackInfo ci) {
         calculateTotalStaminaCost();
-        try {
-            calculateRollStaminaCost();
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+        calculateRollStaminaCost();
         disableRoll();
         this.setTotalActionStaminaCost(this.totalActionStaminaCost);
     }
 
+    @Override
     public int getTotalActionStaminaCost() {
         return this.totalActionStaminaCost;
     }
@@ -54,6 +52,11 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
     @Override
     public void setTotalActionStaminaCostClientSide(int totalActionStaminaCost) {
         this.totalActionStaminaCost = totalActionStaminaCost;
+    }
+
+    @Override
+    public void syncActionStaminaClientSide(boolean syncActionStamina) {
+        this.syncActionStamina = syncActionStamina;
     }
 
     /**
@@ -65,9 +68,9 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
         calculateMeleeStaminaCost();
         calculateRangeStaminaCost();
 
-        if (this.totalActionStaminaCost > 0) {
-            this.totalActionStaminaCost--;
+        if (this.syncActionStamina) {
             ModNet.NET.sendToServer(new SyncActionToServerMsg(this.totalActionStaminaCost));
+            this.syncActionStamina = false;
         }
     }
 
@@ -78,11 +81,13 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
      */
     private void calculateMeleeStaminaCost() {
         int currentCombo = ((PlayerAttackProperties) player).getComboCount();
+//        BetterParaglidersMod.LOGGER.info("CURRENT COMBO: " + currentCombo);
         this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
 
         if (currentCombo > 0 && currentCombo != this.comboCount) {
             this.comboCount = currentCombo;
             this.totalActionStaminaCost = CalculateStaminaUtils.calculateMeleeStaminaCost((LocalPlayer) this.player, currentCombo);
+            this.syncActionStamina = true;
         }
     }
 
@@ -90,6 +95,7 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
         //TODO: Maybe I want to pass in the projectileWeaponItem instead of LocalPlayer?
         if (player.getUseItem().getItem() instanceof  ProjectileWeaponItem projectileWeaponItem) {
             this.totalActionStaminaCost = CalculateStaminaUtils.calculateRangeStaminaCost((LocalPlayer) this.player);
+            this.syncActionStamina = true;
         }
     }
 
@@ -100,10 +106,12 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
      * @throws IllegalAccessException
      * @throws NoSuchMethodException
      */
-    private void calculateRollStaminaCost() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException {
+    private void calculateRollStaminaCost() {
         //TODO: Put fire out after x amount of rolls?
         if (this.rollManager.isRolling()) {
+
             this.totalActionStaminaCost = CalculateStaminaUtils.calculateRollStaminaCost((LocalPlayer) this.player);
+            this.syncActionStamina = true;
         }
     }
 

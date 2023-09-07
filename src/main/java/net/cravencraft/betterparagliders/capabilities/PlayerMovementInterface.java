@@ -20,6 +20,7 @@ public interface PlayerMovementInterface {
      * ClientPlayerMovement
      */
     void setTotalActionStaminaCostClientSide(int totalActionStaminaCost);
+    void syncActionStaminaClientSide(boolean syncActionStamina);
 
 
 }

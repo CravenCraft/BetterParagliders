@@ -8,12 +8,13 @@ import net.minecraft.network.FriendlyByteBuf;
  *
  * @param totalActionStaminaCost
  */
-public record SyncActionToClientMsg(int totalActionStaminaCost) {
+public record SyncActionToClientMsg(int totalActionStaminaCost, boolean syncActionStamina) {
     public static SyncActionToClientMsg read(FriendlyByteBuf buffer){
-        return new SyncActionToClientMsg(buffer.readInt());
+        return new SyncActionToClientMsg(buffer.readInt(), buffer.readBoolean());
     }
 
     public void write(FriendlyByteBuf buffer){
         buffer.writeInt(totalActionStaminaCost);
+        buffer.writeBoolean(syncActionStamina);
     }
 }
