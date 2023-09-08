@@ -46,6 +46,14 @@ right click abilities) will now drain stamina. Here's a short list of everything
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
 into your minecraft mods folder along with this one, and everything should work fine!
 
+## V0.3.0
+- Optimized network code a bit more. Should be effected less by lag spikes on servers now.
+- Added **effects** and **effects_strength** to the server config to allow users to add _any_ effect they want
+    based on the effect's ID, and to edit the strength of the respective effects. If the effect does not exist,
+    the player will receive a message stating which one doesn't exist when their stamina is depleted, and if no
+    effect strength is set, then it will default to 1.
+- Should be the last updated before I work on porting to 1.20.1!
+
 ## V0.2.4
 - Fixed a bug causing stamina to only drain running energy when sprinting and attacking.
 - Fixed a bug causing dual wielded weapons to only drain stamina from the main hand item.

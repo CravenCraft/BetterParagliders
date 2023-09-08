@@ -24,7 +24,7 @@ public final class BetterParaglidersEventHandler {
     @SubscribeEvent
     public static void ShieldBlockEvent(ShieldBlockEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            SyncActionToClientMsg msg = new SyncActionToClientMsg((int) event.getBlockedDamage());
+            SyncActionToClientMsg msg = new SyncActionToClientMsg((int) event.getBlockedDamage(), true);
             if(ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Sending packet {} to player {}", msg, player);
             ModNet.NET.send(PacketDistributor.PLAYER.with(() -> player), msg);
         }

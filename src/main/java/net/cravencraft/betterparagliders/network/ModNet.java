@@ -65,6 +65,7 @@ public class ModNet {
                 if (ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Received {}", msg);
 //                msg.copyTo(clientPlayerMovement);
                 ((PlayerMovementInterface) clientPlayerMovement).setTotalActionStaminaCostClientSide(msg.totalActionStaminaCost());
+                ((PlayerMovementInterface) clientPlayerMovement).syncActionStaminaClientSide(msg.syncActionStamina());
             }
             else {
                 ParagliderMod.LOGGER.error("Couldn't handle packet {}, capability not found", msg);

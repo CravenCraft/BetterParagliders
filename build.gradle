@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.2.4-1.18.2'
+version = '0.3.0-1.18.2'
 group = 'com.cravencraft.betterparagliders' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'betterparagliders'
 
