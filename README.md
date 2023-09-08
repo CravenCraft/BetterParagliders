@@ -38,9 +38,9 @@ right click abilities) will now drain stamina. Here's a short list of everything
   - **roll_factor**
 
 ## Mod Dependencies
-- [Paragliders](https://www.curseforge.com/minecraft/mc-mods/paragliders/files/4478246) (1.18.2)
-- [Better Combat](https://www.curseforge.com/minecraft/mc-mods/better-combat-by-daedelus/files/4428885) (1.18.2)
-- [Combat Roll](https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428900) (1.18.2)
+- [Paragliders](https://www.curseforge.com/minecraft/mc-mods/paragliders/files/4478230) (1.19.2)
+- [Better Combat](https://www.curseforge.com/minecraft/mc-mods/better-combat-by-daedelus/files/4534619) (1.19.2)
+- [Combat Roll](https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428898) (1.19.2)
 
 ## Install Instructions
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
@@ -78,4 +78,4 @@ into your minecraft mods folder along with this one, and everything should work 
 - Fixed a MASSIVE bug in multiplayer where players would sometimes share the same stamina
 
 ## V0.1.0
-First official version of this mod. Has some pretty basic support of all basic attacks, blocking, and rolling.
+- First official version of this mod. Has some pretty basic support of all basic attacks, blocking, and rolling.
