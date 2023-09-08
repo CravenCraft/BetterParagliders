@@ -2,7 +2,6 @@ package net.cravencraft.betterparagliders.capabilities;
 
 public interface PlayerMovementInterface {
 
-
     /**
      * TODO: Maybe test separating these into their own separate interfaces
      *       if this becomes too large?
@@ -21,6 +20,4 @@ public interface PlayerMovementInterface {
      */
     void setTotalActionStaminaCostClientSide(int totalActionStaminaCost);
     void syncActionStaminaClientSide(boolean syncActionStamina);
-
-
 }

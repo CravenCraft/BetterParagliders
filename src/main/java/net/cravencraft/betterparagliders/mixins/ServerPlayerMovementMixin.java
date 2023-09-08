@@ -2,63 +2,32 @@ package net.cravencraft.betterparagliders.mixins;
 
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
-import net.cravencraft.betterparagliders.network.ModNet;
-import net.cravencraft.betterparagliders.network.SyncActionToClientMsg;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraftforge.network.PacketDistributor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tictim.paraglider.ModCfg;
-import tictim.paraglider.ParagliderMod;
 import tictim.paraglider.capabilities.PlayerMovement;
 import tictim.paraglider.capabilities.PlayerState;
 import tictim.paraglider.capabilities.ServerPlayerMovement;
 
 @Mixin(ServerPlayerMovement.class)
 public abstract class ServerPlayerMovementMixin extends PlayerMovement implements PlayerMovementInterface {
-    private boolean actionStaminaNeedsSync;
     private int totalActionStaminaCost;
 
     public ServerPlayerMovementMixin(Player player) { super(player); }
 
     @Inject(method = "update", at = @At(value = "HEAD"),  remap=false)
     public void update(CallbackInfo ci) {
-//        //TODO: Is this necessary?
-        if(!this.player.isCreative() && this.isDepleted()){
-            this.player.addEffect(new MobEffectInstance(MobEffect.byId(18))); // Adds weakness
-        }
 
         checkShieldDisable();
-//        syncActionStamina();
         this.setTotalActionStaminaCost(this.totalActionStaminaCost);
     }
 
     public void setTotalActionStaminaCostServerSide(int totalActionStaminaCost) {
         this.totalActionStaminaCost = totalActionStaminaCost;
     }
-
-//    /**
-//     * Syncs the totalActionStaminaCost from the server to the client if the player performs an action that needs
-//     * to be synced (blocking).
-//     */
-//    private void syncActionStamina() {
-//        if (actionStaminaNeedsSync) {
-//            if (this.player instanceof ServerPlayer serverPlayer) {
-//                BetterParaglidersMod.LOGGER.info("INSIDE BLOCK STAMINA COST");
-//                //TODO: Issue to fix
-//                SyncActionToClientMsg msg = new SyncActionToClientMsg(this.totalActionStaminaCost);
-//                if(ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Sending packet {} to player {}", msg, this.player);
-//                ModNet.NET.send(PacketDistributor.PLAYER.with(() -> serverPlayer), msg);
-//                actionStaminaNeedsSync = false;
-//            }
-//        }
-//    }
 
     /**
      * Checks if the player is currently holding a shield item. If so, then the modifyShieldCooldown method is called

@@ -1,7 +1,9 @@
 package net.cravencraft.betterparagliders.mixins;
 
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.config.UpdatedModCfg;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -15,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tictim.paraglider.ModCfg;
 import tictim.paraglider.capabilities.PlayerMovement;
 import tictim.paraglider.capabilities.PlayerState;
+import java.util.List;
 
 @Mixin(PlayerMovement.class)
 public abstract class PlayerMovementMixin implements PlayerMovementInterface {
@@ -83,7 +86,28 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
      */
     protected void addEffects() {
         if(!this.player.isCreative() && this.depleted) {
-            this.player.addEffect(new MobEffectInstance(MobEffect.byId(18))); // Adds weakness
+            List<Integer> effects = UpdatedModCfg.depletionEffectList();
+            List<Integer> effectStrengths = UpdatedModCfg.depletionEffectStrengthList();
+
+            for (int i=0; i < effects.size(); i++) {
+                int effectStrength;
+                if (i >= effectStrengths.size()) {
+                    effectStrength = 0;
+                }
+                else {
+                    effectStrength = effectStrengths.get(i) - 1;
+                }
+
+                if (MobEffect.byId(effects.get(i)) != null) {
+                    this.player.addEffect(new MobEffectInstance(MobEffect.byId(effects.get(i)), 0, effectStrength));
+                }
+                else {
+                    if (this.player instanceof ServerPlayer serverPlayer) {
+                        serverPlayer.displayClientMessage(Component.literal("Effect with ID " + effects.get(i) + " does not exist."), true);
+                    }
+                }
+
+            }
         }
     }
 }
