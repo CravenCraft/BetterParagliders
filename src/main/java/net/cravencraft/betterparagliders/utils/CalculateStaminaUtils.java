@@ -3,9 +3,9 @@ package net.cravencraft.betterparagliders.utils;
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
 import net.combatroll.api.EntityAttributes_CombatRoll;
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
-import net.cravencraft.betterparagliders.config.UpdatedModCfg;
+import net.cravencraft.betterparagliders.config.ConfigManager;
+import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.AxeItem;
@@ -28,6 +28,7 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int calculateMeleeStaminaCost(LocalPlayer player, int currentCombo) {
+        ServerConfig serverConfig = ConfigManager.SERVER_CONFIG;
         double tierFactor = 0;
         double attackDamageFactor = 1; // Default hand damage is 1
         AttackHand attackHand = PlayerAttackHelper.getCurrentAttack(player, currentCombo);
@@ -47,15 +48,15 @@ public class CalculateStaminaUtils {
 
         double totalStaminaDrain = ((attackDamageFactor * (tierFactor * 0.1 + 2) ) + reachFactor)
                         * player.getAttributeValue(BetterParaglidersAttributes.MELEE_FACTOR.get())
-                        * UpdatedModCfg.meleeStaminaConsumption();
+                        * serverConfig.meleeStaminaConsumption();
 
         if (isTwoHanded) {
             totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_FACTOR.get())
-                        * UpdatedModCfg.twoHandedStaminaConsumption();
+                        * serverConfig.twoHandedStaminaConsumption();
         }
         else {
             totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_FACTOR.get())
-                        * UpdatedModCfg.oneHandedStaminaConsumption();
+                        * serverConfig.oneHandedStaminaConsumption();
         }
         return (int) Math.ceil(totalStaminaDrain);
     }
@@ -69,7 +70,7 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int calculateRangeStaminaCost(LocalPlayer player) {
-        return (int) ((baseRangeStaminaCost * player.getAttributeValue(BetterParaglidersAttributes.RANGE_FACTOR.get())) * UpdatedModCfg.rangeStaminaConsumption());
+        return (int) ((baseRangeStaminaCost * player.getAttributeValue(BetterParaglidersAttributes.RANGE_FACTOR.get())) * ConfigManager.SERVER_CONFIG.rangeStaminaConsumption());
     }
 
     /**
@@ -82,7 +83,7 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int calculateBlockStaminaCost(ServerPlayer serverPlayer, float amount) {
-        return (int) ((amount * serverPlayer.getAttributeValue(BetterParaglidersAttributes.BLOCK_FACTOR.get())) * UpdatedModCfg.blockStaminaConsumption());
+        return (int) ((amount * serverPlayer.getAttributeValue(BetterParaglidersAttributes.BLOCK_FACTOR.get())) * ConfigManager.SERVER_CONFIG.blockStaminaConsumption());
     }
 
     /**
@@ -98,6 +99,6 @@ public class CalculateStaminaUtils {
     public static int calculateRollStaminaCost(LocalPlayer player) {
         double enchantmentStaminaReduction = (1 - (EntityAttributes_CombatRoll.getAttributeValue(player, COUNT) * 0.05));
         int armorCost = (player.getArmorValue() > baseRollStaminaCost) ? player.getArmorValue() : baseRollStaminaCost;
-        return (int) ((armorCost * enchantmentStaminaReduction * player.getAttributeValue(BetterParaglidersAttributes.ROLL_FACTOR.get())) * UpdatedModCfg.rollStaminaConsumption());
+        return (int) ((armorCost * enchantmentStaminaReduction * player.getAttributeValue(BetterParaglidersAttributes.ROLL_FACTOR.get())) * ConfigManager.SERVER_CONFIG.rollStaminaConsumption());
     }
 }

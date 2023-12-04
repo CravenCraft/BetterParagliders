@@ -1,7 +1,8 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.common;
 
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
-import net.cravencraft.betterparagliders.config.UpdatedModCfg;
+import net.cravencraft.betterparagliders.config.ConfigManager;
+import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -86,8 +87,9 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
      */
     protected void addEffects() {
         if(!this.player.isCreative() && this.depleted) {
-            List<Integer> effects = UpdatedModCfg.depletionEffectList();
-            List<Integer> effectStrengths = UpdatedModCfg.depletionEffectStrengthList();
+            ServerConfig serverConfig = ConfigManager.SERVER_CONFIG;
+            List<Integer> effects = serverConfig.depletionEffectList();
+            List<Integer> effectStrengths = serverConfig.depletionEffectStrengthList();
 
             for (int i=0; i < effects.size(); i++) {
                 int effectStrength;

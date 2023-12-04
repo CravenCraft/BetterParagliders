@@ -1,6 +1,5 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.server;
 
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ShieldItem;
@@ -51,7 +50,6 @@ public abstract class ServerPlayerMovementMixin extends PlayerMovement implement
      */
     private void modifyShieldCooldown(ShieldItem shieldItem) {
         if (player.getCooldowns().isOnCooldown(shieldItem) && !this.isDepleted()) {
-            BetterParaglidersMod.LOGGER.info("REMOVING COOLDOWN");
             player.getCooldowns().removeCooldown(shieldItem);
         }
         else if (this.isDepleted()) {

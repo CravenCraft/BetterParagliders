@@ -1,6 +1,6 @@
 package net.cravencraft.betterparagliders;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
-import net.cravencraft.betterparagliders.config.UpdatedModCfg;
+import net.cravencraft.betterparagliders.config.ConfigManager;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,10 +26,10 @@ public class BetterParaglidersMod
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         Contents.registerEventHandlers(eventBus);
         BetterParaglidersAttributes.registerEventHandlers(eventBus);
-        UpdatedModCfg.init();
         ModNet.init();
 
         // Register ourselves for server and other game events we are interested in
+        ConfigManager.registerConfigs();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
