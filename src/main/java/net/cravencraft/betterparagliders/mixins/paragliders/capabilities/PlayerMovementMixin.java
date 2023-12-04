@@ -1,7 +1,8 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
-import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
+import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -44,10 +45,11 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
      */
     @Inject(method = "updateStamina", at = @At("HEAD"), cancellable = true, remap = false)
     public void updateStamina(CallbackInfo ci) {
+        int stateChange = CalculateStaminaUtils.getModifiedStateChange(this.player, this.state);
         if (this.totalActionStaminaCost != 0 || this.state.isConsume()) {
+            BetterParaglidersMod.LOGGER.info("STATE CHANGE: " + this.state + " - " + stateChange);
             this.recoveryDelay = 10;
 
-            int stateChange = getModifiedStateChange();
             stateChange = (state.isConsume()) ? stateChange - this.totalActionStaminaCost : -this.totalActionStaminaCost;
 
             if (!this.depleted && ((state.isParagliding()
@@ -59,8 +61,8 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
         else if (this.recoveryDelay > 0) {
             --this.recoveryDelay;
         }
-        else if (this.state.change() > 0) {
-            this.stamina = Math.min(this.getMaxStamina(), this.stamina + this.state.change());
+        else if (stateChange > 0) {
+            this.stamina = Math.min(this.getMaxStamina(), this.stamina + stateChange);
         }
 
         if (this.totalActionStaminaCost > 0) {
@@ -75,28 +77,5 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
         }
 
         ci.cancel();
-    }
-
-    /**
-     * Modifies the stamina drain for the current states below based on the attribute values
-     * for the given player.
-     *
-     * @return
-     */
-    public int getModifiedStateChange() {
-        switch (state) {
-            case IDLE:
-                return (int) (state.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
-            case RUNNING:
-                return (int) (state.change() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
-            case SWIMMING:
-                return (int) (state.change() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
-            case UNDERWATER:
-                return (int) (state.change() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
-            case BREATHING_UNDERWATER:
-                return (int) (state.change() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
-            default:
-                return state.change();
-        }
     }
 }

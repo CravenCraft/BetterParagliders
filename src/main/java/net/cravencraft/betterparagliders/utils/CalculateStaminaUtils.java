@@ -11,6 +11,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import tictim.paraglider.capabilities.PlayerState;
 
 import static net.combatroll.api.EntityAttributes_CombatRoll.Type.COUNT;
 
@@ -47,7 +49,7 @@ public class CalculateStaminaUtils {
             totalStaminaDrain = (totalStaminaDrain * serverConfig.oneHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
         }
 
-        totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
+        totalStaminaDrain -= player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
 
         //TODO: Remove this logger before merging to release
         BetterParaglidersMod.LOGGER.info("TOTAL STAMINA DRAIN: " + totalStaminaDrain);
@@ -94,5 +96,28 @@ public class CalculateStaminaUtils {
         double enchantmentStaminaReduction = (1 - (EntityAttributes_CombatRoll.getAttributeValue(player, COUNT) * 0.05));
         int armorCost = (player.getArmorValue() > baseRollStaminaCost) ? player.getArmorValue() : baseRollStaminaCost;
         return (int) ((armorCost * ConfigManager.SERVER_CONFIG.rollStaminaConsumption() ) - player.getAttributeValue(BetterParaglidersAttributes.ROLL_STAMINA_REDUCTION.get()));
+    }
+
+    /**
+     * Modifies the stamina drain for the current states below based on the attribute values
+     * for the given player.
+     *
+     * @return
+     */
+    public static int getModifiedStateChange(Player player, PlayerState playerState) {
+        switch (playerState) {
+            case IDLE:
+                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
+            case RUNNING:
+                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
+            case SWIMMING:
+                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
+            case UNDERWATER:
+                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
+            case BREATHING_UNDERWATER:
+                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
+            default:
+                return playerState.change();
+        }
     }
 }
