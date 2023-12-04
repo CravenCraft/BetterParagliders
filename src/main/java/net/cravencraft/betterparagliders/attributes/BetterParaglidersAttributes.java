@@ -19,6 +19,8 @@ public class BetterParaglidersAttributes {
 
     public static final RegistryObject<Attribute> SPRINTING_STAMINA_REDUCTION = ATTRIBUTES.register("sprinting_stamina_reduction", () -> new RangedAttribute("sprinting_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
     public static final RegistryObject<Attribute> SWIMMING_STAMINA_REDUCTION = ATTRIBUTES.register("swimming_stamina_reduction", () -> new RangedAttribute("swimming_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> IDLE_STAMINA_REGEN = ATTRIBUTES.register("idle_stamina_regen", () -> new RangedAttribute("idle_stamina_regen", 0.0, 0.0, 100.0).setSyncable(true));
+
     public static final RegistryObject<Attribute> SUBMERGED_STAMINA_REGEN = ATTRIBUTES.register("submerged_stamina_regen", () -> new RangedAttribute("submerged_stamina_regen", 0.0, 0.0, 100.0).setSyncable(true));
     public static final RegistryObject<Attribute> WATER_BREATHING_STAMINA_REGEN = ATTRIBUTES.register("water_breathing_stamina_regen", () -> new RangedAttribute("water_breathing_stamina_regen", 0.0, 0.0, 100.0).setSyncable(true));
 
@@ -26,12 +28,12 @@ public class BetterParaglidersAttributes {
     /**
      * Combat Attributes
      */
-    public static final RegistryObject<Attribute> BASE_MELEE_STAMINA_REDUCTION = ATTRIBUTES.register("melee_factor", () -> new RangedAttribute("melee_factor", 1.0, 0.0, 10.0).setSyncable(true));
-    public static final RegistryObject<Attribute> TWO_HANDED_STAMINA_REDUCTION = ATTRIBUTES.register("two_handed_factor", () -> new RangedAttribute("two_handed_factor", 1.0, 0.0, 10.0).setSyncable(true));
-    public static final RegistryObject<Attribute> ONE_HANDED_STAMINA_REDUCTION = ATTRIBUTES.register("one_handed_factor", () -> new RangedAttribute("one_handed_factor", 1.0, 0.0, 10.0).setSyncable(true));
-    public static final RegistryObject<Attribute> RANGE_STAMINA_REDUCTION = ATTRIBUTES.register("range_factor", () -> new RangedAttribute("range_factor", 1.0, 0.0, 10.0).setSyncable(true));
-    public static final RegistryObject<Attribute> BLOCK_STAMINA_REDUCTION = ATTRIBUTES.register("block_factor", () -> new RangedAttribute("block_factor", 1.0, 0.0, 10.0).setSyncable(true));
-    public static final RegistryObject<Attribute> ROLL_STAMINA_REDUCTION = ATTRIBUTES.register("roll_factor", () -> new RangedAttribute("roll_factor", 1.0, 0.0, 10.0).setSyncable(true));
+    public static final RegistryObject<Attribute> BASE_MELEE_STAMINA_REDUCTION = ATTRIBUTES.register("base_melee_stamina_reduction", () -> new RangedAttribute("base_melee_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> TWO_HANDED_STAMINA_REDUCTION = ATTRIBUTES.register("two_handed_stamina_reduction", () -> new RangedAttribute("two_handed_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> ONE_HANDED_STAMINA_REDUCTION = ATTRIBUTES.register("one_handed_stamina_reduction", () -> new RangedAttribute("one_handed_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> RANGE_STAMINA_REDUCTION = ATTRIBUTES.register("range_stamina_reduction", () -> new RangedAttribute("range_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> BLOCK_STAMINA_REDUCTION = ATTRIBUTES.register("block_stamina_reduction", () -> new RangedAttribute("block_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> ROLL_STAMINA_REDUCTION = ATTRIBUTES.register("roll_stamina_reduction", () -> new RangedAttribute("roll_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
 
     public static void registerEventHandlers(IEventBus eventBus) {
        ATTRIBUTES.register(eventBus);

@@ -84,8 +84,9 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
      * @return
      */
     public int getModifiedStateChange() {
-
         switch (state) {
+            case IDLE:
+                return (int) (state.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
             case RUNNING:
                 return (int) (state.change() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
             case SWIMMING:

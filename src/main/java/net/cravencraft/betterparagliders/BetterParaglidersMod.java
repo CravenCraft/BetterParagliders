@@ -38,6 +38,7 @@ public class BetterParaglidersMod
         // Mobility Attributes
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get());
 

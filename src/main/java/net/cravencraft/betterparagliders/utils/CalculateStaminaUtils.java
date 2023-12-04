@@ -38,18 +38,19 @@ public class CalculateStaminaUtils {
                 .filter(attributeModifier -> attributeModifier.getName().contains("Weapon") || attributeModifier.getName().contains("Tool"))
                 .findFirst().get().getAmount();
 
-        double totalStaminaDrain = (weaponAttackDamage + reachFactor)
-                        * player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get())
-                        * serverConfig.meleeStaminaConsumption();
+        double totalStaminaDrain = (weaponAttackDamage + reachFactor) * serverConfig.meleeStaminaConsumption();
 
         if (isTwoHanded) {
-            totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get())
-                        * serverConfig.twoHandedStaminaConsumption();
+            totalStaminaDrain = (totalStaminaDrain * serverConfig.twoHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
         }
         else {
-            totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get())
-                        * serverConfig.oneHandedStaminaConsumption();
+            totalStaminaDrain = (totalStaminaDrain * serverConfig.oneHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
         }
+
+        totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
+
+        //TODO: Remove this logger before merging to release
+        BetterParaglidersMod.LOGGER.info("TOTAL STAMINA DRAIN: " + totalStaminaDrain);
 
         return (int) Math.ceil(totalStaminaDrain);
     }
@@ -63,7 +64,7 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int calculateRangeStaminaCost(LocalPlayer player) {
-        return (int) ((baseRangeStaminaCost * player.getAttributeValue(BetterParaglidersAttributes.RANGE_STAMINA_REDUCTION.get())) * ConfigManager.SERVER_CONFIG.rangeStaminaConsumption());
+        return (int) ((baseRangeStaminaCost * ConfigManager.SERVER_CONFIG.rangeStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.RANGE_STAMINA_REDUCTION.get()));
     }
 
     /**
@@ -76,7 +77,7 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int calculateBlockStaminaCost(ServerPlayer serverPlayer, float amount) {
-        return (int) ((amount * serverPlayer.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get())) * ConfigManager.SERVER_CONFIG.blockStaminaConsumption());
+        return (int) ((amount * ConfigManager.SERVER_CONFIG.blockStaminaConsumption()) - serverPlayer.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get()));
     }
 
     /**
@@ -92,6 +93,6 @@ public class CalculateStaminaUtils {
     public static int calculateRollStaminaCost(LocalPlayer player) {
         double enchantmentStaminaReduction = (1 - (EntityAttributes_CombatRoll.getAttributeValue(player, COUNT) * 0.05));
         int armorCost = (player.getArmorValue() > baseRollStaminaCost) ? player.getArmorValue() : baseRollStaminaCost;
-        return (int) ((armorCost * enchantmentStaminaReduction * player.getAttributeValue(BetterParaglidersAttributes.ROLL_STAMINA_REDUCTION.get())) * ConfigManager.SERVER_CONFIG.rollStaminaConsumption());
+        return (int) ((armorCost * ConfigManager.SERVER_CONFIG.rollStaminaConsumption() ) - player.getAttributeValue(BetterParaglidersAttributes.ROLL_STAMINA_REDUCTION.get()));
     }
 }
