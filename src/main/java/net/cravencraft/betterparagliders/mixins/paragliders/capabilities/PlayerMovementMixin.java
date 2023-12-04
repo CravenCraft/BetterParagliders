@@ -1,6 +1,5 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.minecraft.client.player.LocalPlayer;
@@ -50,7 +49,6 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
 
             int stateChange = getModifiedStateChange();
             stateChange = (state.isConsume()) ? stateChange - this.totalActionStaminaCost : -this.totalActionStaminaCost;
-            BetterParaglidersMod.LOGGER.info("STATE CHANGE: " + stateChange);
 
             if (!this.depleted && ((state.isParagliding()
                     ? ModCfg.paraglidingConsumesStamina()

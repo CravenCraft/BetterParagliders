@@ -31,23 +31,16 @@ public class CalculateStaminaUtils {
         ServerConfig serverConfig = ConfigManager.SERVER_CONFIG;
         AttackHand attackHand = PlayerAttackHelper.getCurrentAttack(player, currentCombo);
         double reachFactor = attackHand.attributes().attackRange();
-        BetterParaglidersMod.LOGGER.info("---------------------------------------------");
-        BetterParaglidersMod.LOGGER.info("REACH FACTOR: " + reachFactor);
         boolean isTwoHanded = attackHand.attributes().isTwoHanded();
-        BetterParaglidersMod.LOGGER.info("IS TWO HANDED: " + isTwoHanded);
 
         double weaponAttackDamage = attackHand.itemStack().getItem().getAttributeModifiers(EquipmentSlot.MAINHAND, attackHand.itemStack())
                 .get(Attributes.ATTACK_DAMAGE).stream()
                 .filter(attributeModifier -> attributeModifier.getName().contains("Weapon") || attributeModifier.getName().contains("Tool"))
                 .findFirst().get().getAmount();
 
-        BetterParaglidersMod.LOGGER.info("WEAPON ATTACK DAMAGE: " + weaponAttackDamage);
-
         double totalStaminaDrain = (weaponAttackDamage + reachFactor)
                         * player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get())
                         * serverConfig.meleeStaminaConsumption();
-
-        BetterParaglidersMod.LOGGER.info("STAMINA DRAIN PRIOR TO HANDED CHECK: " + totalStaminaDrain);
 
         if (isTwoHanded) {
             totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get())
@@ -57,8 +50,6 @@ public class CalculateStaminaUtils {
             totalStaminaDrain *= player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get())
                         * serverConfig.oneHandedStaminaConsumption();
         }
-
-        BetterParaglidersMod.LOGGER.info("STAMINA DRAIN AFTER TO HANDED CHECK: " + totalStaminaDrain);
 
         return (int) Math.ceil(totalStaminaDrain);
     }
