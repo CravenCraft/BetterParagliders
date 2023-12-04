@@ -2,16 +2,17 @@
   "required": true,
   "minVersion": "0.7",
   "package": "net.cravencraft.betterparagliders.mixins",
+  "refmap": "epicparagliders.mixins.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ServerPlayerMovementMixin",
-    "PlayerMovementMixin"
+    "paragliders.server.ServerPlayerMovementMixin",
+    "paragliders.common.PlayerMovementMixin"
   ],
   "client": [
-    "InGameStaminaWheelRendererMixin",
-    "ClientPlayerMovementMixin",
-    "HudRenderHelperMixin",
-    "RollManagerMixin"
+    "paragliders.client.InGameStaminaWheelRendererMixin",
+    "paragliders.client.ClientPlayerMovementMixin",
+    "combatroll.HudRenderHelperMixin",
+    "combatroll.RollManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

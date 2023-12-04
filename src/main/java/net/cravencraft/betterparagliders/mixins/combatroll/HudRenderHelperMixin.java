@@ -1,4 +1,4 @@
-package net.cravencraft.betterparagliders.mixins;
+package net.cravencraft.betterparagliders.mixins.combatroll;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.combatroll.client.gui.HudRenderHelper;

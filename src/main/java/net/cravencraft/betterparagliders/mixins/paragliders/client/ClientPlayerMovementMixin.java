@@ -1,4 +1,4 @@
-package net.cravencraft.betterparagliders.mixins;
+package net.cravencraft.betterparagliders.mixins.paragliders.client;
 
 import net.bettercombat.logic.PlayerAttackProperties;
 import net.combatroll.client.MinecraftClientExtension;

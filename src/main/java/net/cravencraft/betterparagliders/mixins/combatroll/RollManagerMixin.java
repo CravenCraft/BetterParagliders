@@ -1,4 +1,4 @@
-package net.cravencraft.betterparagliders.mixins;
+package net.cravencraft.betterparagliders.mixins.combatroll;
 
 import net.combatroll.CombatRoll;
 import net.combatroll.api.EntityAttributes_CombatRoll;
