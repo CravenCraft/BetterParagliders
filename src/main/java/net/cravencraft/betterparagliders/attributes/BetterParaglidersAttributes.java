@@ -17,6 +17,11 @@ public class BetterParaglidersAttributes {
      * Mobility Attributes
      */
 
+    public static final RegistryObject<Attribute> SPRINTING_STAMINA_REDUCTION = ATTRIBUTES.register("sprinting_stamina_reduction", () -> new RangedAttribute("sprinting_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> SWIMMING_STAMINA_REDUCTION = ATTRIBUTES.register("swimming_stamina_reduction", () -> new RangedAttribute("swimming_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> SUBMERGED_STAMINA_REGEN = ATTRIBUTES.register("submerged_stamina_regen", () -> new RangedAttribute("submerged_stamina_regen", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> WATER_BREATHING_STAMINA_REGEN = ATTRIBUTES.register("water_breathing_stamina_regen", () -> new RangedAttribute("water_breathing_stamina_regen", 0.0, 0.0, 100.0).setSyncable(true));
+
 
     /**
      * Combat Attributes

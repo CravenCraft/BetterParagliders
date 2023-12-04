@@ -35,6 +35,13 @@ public class BetterParaglidersMod
 
     @SubscribeEvent
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event){
+        // Mobility Attributes
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get());
+
+        // Combat Attributes
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
