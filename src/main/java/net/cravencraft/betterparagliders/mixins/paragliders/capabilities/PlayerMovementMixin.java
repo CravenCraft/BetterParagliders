@@ -1,4 +1,4 @@
-package net.cravencraft.betterparagliders.mixins.paragliders.common;
+package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.config.ConfigManager;
@@ -30,6 +30,15 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
     @Shadow @Final public Player player;
     public int totalActionStaminaCost;
 
+    @Override
+    public int getTotalActionStaminaCost() {
+        return this.totalActionStaminaCost;
+    }
+
+    @Override
+    public void setTotalActionStaminaCost(int totalActionStaminaCost) {
+        this.totalActionStaminaCost = totalActionStaminaCost;
+    }
 
     /**
      * TODO: Double check everything, but I think we have mixins working. DO make the updates
@@ -68,48 +77,6 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
             this.setTotalActionStaminaCostClientSide(this.totalActionStaminaCost);
         }
 
-        addEffects();
         ci.cancel();
-    }
-
-    @Override
-    public int getTotalActionStaminaCost() {
-        return this.totalActionStaminaCost;
-    }
-
-    @Override
-    public void setTotalActionStaminaCost(int totalActionStaminaCost) {
-        this.totalActionStaminaCost = totalActionStaminaCost;
-    }
-
-    /**
-     * Adds all the effects to be applied whenever the player's stamina is depleted.
-     */
-    protected void addEffects() {
-        if(!this.player.isCreative() && this.depleted) {
-            ServerConfig serverConfig = ConfigManager.SERVER_CONFIG;
-            List<Integer> effects = serverConfig.depletionEffectList();
-            List<Integer> effectStrengths = serverConfig.depletionEffectStrengthList();
-
-            for (int i=0; i < effects.size(); i++) {
-                int effectStrength;
-                if (i >= effectStrengths.size()) {
-                    effectStrength = 0;
-                }
-                else {
-                    effectStrength = effectStrengths.get(i) - 1;
-                }
-
-                if (MobEffect.byId(effects.get(i)) != null) {
-                    this.player.addEffect(new MobEffectInstance(MobEffect.byId(effects.get(i)), 0, effectStrength));
-                }
-                else {
-                    if (this.player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.displayClientMessage(Component.literal("Effect with ID " + effects.get(i) + " does not exist."), true);
-                    }
-                }
-
-            }
-        }
     }
 }

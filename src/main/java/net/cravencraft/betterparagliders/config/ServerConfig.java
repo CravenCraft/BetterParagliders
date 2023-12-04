@@ -36,17 +36,17 @@ public class ServerConfig {
     public ServerConfig(ForgeConfigSpec.Builder server) {
         server.push("stamina");
         MELEE_STAMINA_CONSUMPTION = server.comment("How much more/less stamina is consumed from melee attacks.")
-                .defineInRange("meleeStaminaConsumption", 1.0, 0.0, 2.0);
+                .defineInRange("meleeStaminaConsumption", 1.0, 0.0, 10.0);
         TWO_HANDED_STAMINA_CONSUMPTION = server.comment("How much more/less stamina is consumed from two handed attacks (stacks with MELEE_STAMINA_CONSUMPTION).")
-                .defineInRange("twoHandedStaminaConsumption", 1.0, 0.0, 2.0);
+                .defineInRange("twoHandedStaminaConsumption", 2.0, 0.0, 10.0);
         ONE_HANDED_STAMINA_CONSUMPTION = server.comment("How much more/less stamina is consumed from one handed (and dual wielding) attacks (stacks with MELEE_STAMINA_CONSUMPTION).")
-                .defineInRange("oneHandedStaminaConsumption", 1.0, 0.0, 2.0);
+                .defineInRange("oneHandedStaminaConsumption", 2.5, 0.0, 10.0);
         RANGE_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
-                .defineInRange("rangeStaminaConsumption", 1.0, 0.0, 2.0);
+                .defineInRange("rangeStaminaConsumption", 1.0, 0.0, 10.0);
         BLOCK_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
-                .defineInRange("blockStaminaConsumption", 1.0, 0.0, 2.0);
+                .defineInRange("blockStaminaConsumption", 1.0, 0.0, 10.0);
         ROLL_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
-                .defineInRange("rollStaminaConsumption", 1.0, 0.0, 2.0);
+                .defineInRange("rollStaminaConsumption", 1.0, 0.0, 10.0);
         DEPLETION_EFFECT_LIST = server
                 .comment("The effect ID that will be applied when a player runs out of stamina (default is Mining Fatigue and Weakness respectively).")
                 .comment("Refer to https://minecraft.fandom.com/wiki/Effect#Effect_list for a list of the effects and their corresponding IDs")

@@ -1,9 +1,8 @@
-package net.cravencraft.betterparagliders.mixins.paragliders.client;
+package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
 import net.bettercombat.logic.PlayerAttackProperties;
 import net.combatroll.client.MinecraftClientExtension;
 import net.combatroll.client.RollManager;
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
@@ -81,7 +80,6 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
      */
     private void calculateMeleeStaminaCost() {
         int currentCombo = ((PlayerAttackProperties) player).getComboCount();
-//        BetterParaglidersMod.LOGGER.info("CURRENT COMBO: " + currentCombo);
         this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
 
         if (currentCombo > 0 && currentCombo != this.comboCount) {
