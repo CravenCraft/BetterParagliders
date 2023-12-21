@@ -52,7 +52,7 @@ public class CalculateStaminaUtils {
         totalStaminaDrain -= player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
 
         //TODO: Remove this logger before merging to release
-        BetterParaglidersMod.LOGGER.info("TOTAL STAMINA DRAIN: " + totalStaminaDrain);
+//        BetterParaglidersMod.LOGGER.info("TOTAL STAMINA DRAIN: " + totalStaminaDrain);
 
         return (int) Math.ceil(totalStaminaDrain);
     }
@@ -105,6 +105,7 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int getModifiedStateChange(Player player, PlayerState playerState) {
+//        BetterParaglidersMod.LOGGER.info("INSIDE MODIFIED STATE CHANGE");
         switch (playerState) {
             case IDLE:
                 return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));

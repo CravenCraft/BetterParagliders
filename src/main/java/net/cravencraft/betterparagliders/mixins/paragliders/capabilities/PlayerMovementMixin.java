@@ -1,6 +1,7 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
+import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.client.player.LocalPlayer;
@@ -45,9 +46,33 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
      */
     @Inject(method = "updateStamina", at = @At("HEAD"), cancellable = true, remap = false)
     public void updateStamina(CallbackInfo ci) {
-        int stateChange = CalculateStaminaUtils.getModifiedStateChange(this.player, this.state);
+//        BetterParaglidersMod.LOGGER.info("TESTING STAMINA PLAYER MOVEMENT");
+        int stateChange;
+        switch (this.state) {
+            case IDLE:
+//                BetterParaglidersMod.LOGGER.info("INSIDE SWITCH");
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
+                break;
+            case RUNNING:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
+                break;
+            case SWIMMING:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
+                break;
+            case UNDERWATER:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
+                break;
+            case BREATHING_UNDERWATER:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
+                break;
+            default:
+//                BetterParaglidersMod.LOGGER.info("DEFAULT SWITCH");
+                stateChange = this.state.change();
+        }
+//        int stateChange = CalculateStaminaUtils.getModifiedStateChange(this.player, this.state);
+//        BetterParaglidersMod.LOGGER.info("AFTER STATE CHANGE CHECK");
         if (this.totalActionStaminaCost != 0 || this.state.isConsume()) {
-            BetterParaglidersMod.LOGGER.info("STATE CHANGE: " + this.state + " - " + stateChange);
+//            BetterParaglidersMod.LOGGER.info("STATE CHANGE: " + this.state + " - " + stateChange);
             this.recoveryDelay = 10;
 
             stateChange = (state.isConsume()) ? stateChange - this.totalActionStaminaCost : -this.totalActionStaminaCost;
@@ -65,6 +90,8 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
             this.stamina = Math.min(this.getMaxStamina(), this.stamina + stateChange);
         }
 
+//        BetterParaglidersMod.LOGGER.info("AFTER FIRST CHECK");
+
         if (this.totalActionStaminaCost > 0) {
             this.totalActionStaminaCost--;
         }
@@ -75,6 +102,8 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
         else if (this.player instanceof LocalPlayer) {
             this.setTotalActionStaminaCostClientSide(this.totalActionStaminaCost);
         }
+
+//        BetterParaglidersMod.LOGGER.info("AFTER SERVER & CLIENT CHECK");
 
         ci.cancel();
     }

@@ -110,8 +110,8 @@ dependencies {
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
     implementation fg.deobf('maven.modrinth:better-combat:1.7.1+1.19-forge')
     implementation fg.deobf('maven.modrinth:combat-roll:1.1.5+1.19-forge')
-    implementation fg.deobf('curse.maven:architectury-419699:4555749')
-    implementation fg.deobf("curse.maven:simply-swords-659887:4553225")
+//    implementation fg.deobf('curse.maven:architectury-419699:4555749')
+//    implementation fg.deobf("curse.maven:simply-swords-659887:4553225")
 }
 
 jar {
