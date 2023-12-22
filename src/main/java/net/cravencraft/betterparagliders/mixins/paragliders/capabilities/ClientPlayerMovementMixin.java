@@ -38,7 +38,6 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
     @Inject(method = "update", at = @At(value = "HEAD"), remap=false)
     public void update(CallbackInfo ci) {
         calculateTotalStaminaCost();
-        calculateRollStaminaCost();
         disableRoll();
         this.setTotalActionStaminaCost(this.totalActionStaminaCost);
     }
@@ -93,22 +92,6 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
         //TODO: Maybe I want to pass in the projectileWeaponItem instead of LocalPlayer?
         if (player.getUseItem().getItem() instanceof  ProjectileWeaponItem projectileWeaponItem) {
             this.totalActionStaminaCost = CalculateStaminaUtils.calculateRangeStaminaCost((LocalPlayer) this.player);
-            this.syncActionStamina = true;
-        }
-    }
-
-    /**
-     * Calculates the amount of stamina a roll will cost. Factors in weight and enchantments as well.
-     *
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     */
-    private void calculateRollStaminaCost() {
-        //TODO: Put fire out after x amount of rolls?
-        if (this.rollManager.isRolling()) {
-
-            this.totalActionStaminaCost = CalculateStaminaUtils.calculateRollStaminaCost((LocalPlayer) this.player);
             this.syncActionStamina = true;
         }
     }

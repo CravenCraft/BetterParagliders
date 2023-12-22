@@ -10,9 +10,7 @@
   ],
   "client": [
     "paragliders.client.InGameStaminaWheelRendererMixin",
-    "paragliders.capabilities.ClientPlayerMovementMixin",
-    "combatroll.HudRenderHelperMixin",
-    "combatroll.RollManagerMixin"
+    "paragliders.capabilities.ClientPlayerMovementMixin"
   ],
   "injectors": {
     "defaultRequire": 1

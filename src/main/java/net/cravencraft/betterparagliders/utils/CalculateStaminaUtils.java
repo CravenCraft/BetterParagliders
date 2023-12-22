@@ -83,22 +83,6 @@ public class CalculateStaminaUtils {
     }
 
     /**
-     * TODO: Maybe set that baseCost for rolling to be a static final field in this class.
-     *       Add config support for decreasing/increasing stamina consumption.
-     *
-     * Calculates the amount of stamina a roll will cost for the player based on a set base cost,
-     * particular enchantments, and the player's current armor value. Higher values = more stamina consumption.
-     *
-     * @param player
-     * @return
-     */
-    public static int calculateRollStaminaCost(LocalPlayer player) {
-        double enchantmentStaminaReduction = (1 - (EntityAttributes_CombatRoll.getAttributeValue(player, COUNT) * 0.05));
-        int armorCost = (player.getArmorValue() > baseRollStaminaCost) ? player.getArmorValue() : baseRollStaminaCost;
-        return (int) ((armorCost * ConfigManager.SERVER_CONFIG.rollStaminaConsumption() ) - player.getAttributeValue(BetterParaglidersAttributes.ROLL_STAMINA_REDUCTION.get()));
-    }
-
-    /**
      * Modifies the stamina drain for the current states below based on the attribute values
      * for the given player.
      *
