@@ -2,8 +2,6 @@ package net.cravencraft.betterparagliders.utils;
 
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
-import net.combatroll.api.EntityAttributes_CombatRoll;
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.config.ConfigManager;
 import net.cravencraft.betterparagliders.config.ServerConfig;
@@ -12,14 +10,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.system.MathUtil;
 import tictim.paraglider.capabilities.PlayerState;
-
-import static net.combatroll.api.EntityAttributes_CombatRoll.Type.COUNT;
 
 public class CalculateStaminaUtils {
 
     private static final int baseRangeStaminaCost = 10;
-    private static final int baseRollStaminaCost = 10;
 
     /**
      * Drains stamina based on the player's weapon. It's damage, tier, and reach.
@@ -79,7 +75,7 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int calculateBlockStaminaCost(ServerPlayer serverPlayer, float amount) {
-        return (int) ((amount * ConfigManager.SERVER_CONFIG.blockStaminaConsumption()) - serverPlayer.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get()));
+        return Math.round((float)((amount * ConfigManager.SERVER_CONFIG.blockStaminaConsumption() + 10) - serverPlayer.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get())));
     }
 
     /**
@@ -89,7 +85,6 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int getModifiedStateChange(Player player, PlayerState playerState) {
-//        BetterParaglidersMod.LOGGER.info("INSIDE MODIFIED STATE CHANGE");
         switch (playerState) {
             case IDLE:
                 return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));

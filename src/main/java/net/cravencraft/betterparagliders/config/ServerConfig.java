@@ -14,7 +14,6 @@ public class ServerConfig {
     private static ForgeConfigSpec.DoubleValue ONE_HANDED_STAMINA_CONSUMPTION;
     private static ForgeConfigSpec.DoubleValue RANGE_STAMINA_CONSUMPTION;
     private static ForgeConfigSpec.DoubleValue BLOCK_STAMINA_CONSUMPTION;
-    private static ForgeConfigSpec.DoubleValue ROLL_STAMINA_CONSUMPTION;
     private static ForgeConfigSpec.ConfigValue<List<? extends Integer>> DEPLETION_EFFECT_LIST;
     private static ForgeConfigSpec.ConfigValue<List<? extends Integer>> DEPLETION_EFFECT_STRENGTH_LIST;
 
@@ -26,9 +25,6 @@ public class ServerConfig {
     public static double rangeStaminaConsumption() { return RANGE_STAMINA_CONSUMPTION.get(); }
     public static double blockStaminaConsumption() {
         return BLOCK_STAMINA_CONSUMPTION.get();
-    }
-    public static double rollStaminaConsumption() {
-        return ROLL_STAMINA_CONSUMPTION.get();
     }
     public static List<Integer> depletionEffectList() { return (List<Integer>) DEPLETION_EFFECT_LIST.get(); }
     public static List<Integer> depletionEffectStrengthList() { return (List<Integer>) DEPLETION_EFFECT_STRENGTH_LIST.get(); }
@@ -44,9 +40,7 @@ public class ServerConfig {
         RANGE_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
                 .defineInRange("rangeStaminaConsumption", 1.0, 0.0, 10.0);
         BLOCK_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
-                .defineInRange("blockStaminaConsumption", 1.0, 0.0, 10.0);
-        ROLL_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
-                .defineInRange("rollStaminaConsumption", 1.0, 0.0, 10.0);
+                .defineInRange("blockStaminaConsumption", 0.75, 0.0, 10.0);
         DEPLETION_EFFECT_LIST = server
                 .comment("The effect ID that will be applied when a player runs out of stamina (default is Mining Fatigue and Weakness respectively).")
                 .comment("Refer to https://minecraft.fandom.com/wiki/Effect#Effect_list for a list of the effects and their corresponding IDs")

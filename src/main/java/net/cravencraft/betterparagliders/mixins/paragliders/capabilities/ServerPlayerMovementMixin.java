@@ -42,6 +42,7 @@ public abstract class ServerPlayerMovementMixin extends PlayerMovement implement
      * to determine what to do with the shield.
      */
     private void checkShieldDisable() {
+        //TODO: Just make an OR?
         if (player.getOffhandItem().getItem() instanceof ShieldItem offhandShieldItem) {
             modifyShieldCooldown(offhandShieldItem);
         }

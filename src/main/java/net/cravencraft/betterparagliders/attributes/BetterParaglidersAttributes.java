@@ -33,7 +33,6 @@ public class BetterParaglidersAttributes {
     public static final RegistryObject<Attribute> ONE_HANDED_STAMINA_REDUCTION = ATTRIBUTES.register("one_handed_stamina_reduction", () -> new RangedAttribute("one_handed_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
     public static final RegistryObject<Attribute> RANGE_STAMINA_REDUCTION = ATTRIBUTES.register("range_stamina_reduction", () -> new RangedAttribute("range_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
     public static final RegistryObject<Attribute> BLOCK_STAMINA_REDUCTION = ATTRIBUTES.register("block_stamina_reduction", () -> new RangedAttribute("block_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
-    public static final RegistryObject<Attribute> ROLL_STAMINA_REDUCTION = ATTRIBUTES.register("roll_stamina_reduction", () -> new RangedAttribute("roll_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
 
     public static void registerEventHandlers(IEventBus eventBus) {
        ATTRIBUTES.register(eventBus);

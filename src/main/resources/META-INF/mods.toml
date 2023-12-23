@@ -43,13 +43,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magn
     side="BOTH"
 
 [[dependencies.betterparagliders]]
-    modId="combatroll"
-    mandatory=true
-    versionRange="[1.1.5,)"
-    ordering="AFTER"
-    side="BOTH"
-
-[[dependencies.betterparagliders]]
     modId="bettercombat"
     mandatory=true
     versionRange="[1.7.1,)"
