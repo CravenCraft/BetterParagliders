@@ -31,13 +31,13 @@ A compat mod that brings Paraglider's stamina system to Better Combat.
 [[dependencies.betterparagliders]]
     modId="bettercombat"
     mandatory=true
-    versionRange="[1.6.2,)"
+    versionRange="[1.6.2+1.18.2]"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.betterparagliders]]
     modId="paraglider"
     mandatory=true
-    versionRange="[1.6.0.6,)"
+    versionRange="[1.6.0.6]"
     ordering="AFTER"
     side="BOTH"
