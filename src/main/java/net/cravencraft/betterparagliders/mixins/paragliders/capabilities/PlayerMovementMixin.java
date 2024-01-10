@@ -1,14 +1,9 @@
-package net.cravencraft.betterparagliders.mixins;
+package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
+import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
-import net.cravencraft.betterparagliders.config.UpdatedModCfg;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,8 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tictim.paraglider.ModCfg;
 import tictim.paraglider.capabilities.PlayerMovement;
 import tictim.paraglider.capabilities.PlayerState;
-import java.util.List;
-import java.util.UUID;
 
 @Mixin(PlayerMovement.class)
 public abstract class PlayerMovementMixin implements PlayerMovementInterface {
@@ -32,6 +25,15 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
     @Shadow @Final public Player player;
     public int totalActionStaminaCost;
 
+    @Override
+    public int getTotalActionStaminaCost() {
+        return this.totalActionStaminaCost;
+    }
+
+    @Override
+    public void setTotalActionStaminaCost(int totalActionStaminaCost) {
+        this.totalActionStaminaCost = totalActionStaminaCost;
+    }
 
     /**
      * TODO: Double check everything, but I think we have mixins working. DO make the updates
@@ -42,9 +44,30 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
      */
     @Inject(method = "updateStamina", at = @At("HEAD"), cancellable = true, remap = false)
     public void updateStamina(CallbackInfo ci) {
+        int stateChange;
+        switch (this.state) {
+            case IDLE:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
+                break;
+            case RUNNING:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
+                break;
+            case SWIMMING:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
+                break;
+            case UNDERWATER:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
+                break;
+            case BREATHING_UNDERWATER:
+                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
+                break;
+            default:
+                stateChange = this.state.change();
+        }
         if (this.totalActionStaminaCost != 0 || this.state.isConsume()) {
             this.recoveryDelay = 10;
-            int stateChange = (state.isConsume()) ? state.change() - this.totalActionStaminaCost : -this.totalActionStaminaCost;
+
+            stateChange = (state.isConsume()) ? stateChange - this.totalActionStaminaCost : -this.totalActionStaminaCost;
 
             if (!this.depleted && ((state.isParagliding()
                     ? ModCfg.paraglidingConsumesStamina()
@@ -55,8 +78,8 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
         else if (this.recoveryDelay > 0) {
             --this.recoveryDelay;
         }
-        else if (this.state.change() > 0) {
-            this.stamina = Math.min(this.getMaxStamina(), this.stamina + this.state.change());
+        else if (stateChange > 0) {
+            this.stamina = Math.min(this.getMaxStamina(), this.stamina + stateChange);
         }
 
         if (this.totalActionStaminaCost > 0) {
@@ -70,47 +93,6 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
             this.setTotalActionStaminaCostClientSide(this.totalActionStaminaCost);
         }
 
-        addEffects();
         ci.cancel();
-    }
-
-    @Override
-    public int getTotalActionStaminaCost() {
-        return this.totalActionStaminaCost;
-    }
-
-    @Override
-    public void setTotalActionStaminaCost(int totalActionStaminaCost) {
-        this.totalActionStaminaCost = totalActionStaminaCost;
-    }
-
-    /**
-     * Adds all the effects to be applied whenever the player's stamina is depleted.
-     */
-    protected void addEffects() {
-        if(!this.player.isCreative() && this.depleted) {
-            List<Integer> effects = UpdatedModCfg.depletionEffectList();
-            List<Integer> effectStrengths = UpdatedModCfg.depletionEffectStrengthList();
-
-            for (int i=0; i < effects.size(); i++) {
-                int effectStrength;
-                if (i >= effectStrengths.size()) {
-                    effectStrength = 0;
-                }
-                else {
-                    effectStrength = effectStrengths.get(i) - 1;
-                }
-
-                if (MobEffect.byId(effects.get(i)) != null) {
-                    this.player.addEffect(new MobEffectInstance(MobEffect.byId(effects.get(i)), 0, effectStrength));
-                }
-                else {
-                    if (this.player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.sendMessage(new TextComponent("Effect with ID " + effects.get(i) + " does not exist."), ChatType.GAME_INFO, UUID.randomUUID());
-                    }
-                }
-
-            }
-        }
     }
 }

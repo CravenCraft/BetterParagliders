@@ -1,6 +1,6 @@
 package net.cravencraft.betterparagliders;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
-import net.cravencraft.betterparagliders.config.UpdatedModCfg;
+import net.cravencraft.betterparagliders.config.ConfigManager;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,20 +26,27 @@ public class BetterParaglidersMod
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         Contents.registerEventHandlers(eventBus);
         BetterParaglidersAttributes.registerEventHandlers(eventBus);
-        UpdatedModCfg.init();
         ModNet.init();
 
         // Register ourselves for server and other game events we are interested in
+        ConfigManager.registerConfigs();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event){
-        event.add(EntityType.PLAYER, BetterParaglidersAttributes.MELEE_FACTOR.get());
-        event.add(EntityType.PLAYER, BetterParaglidersAttributes.ONE_HANDED_FACTOR.get());
-        event.add(EntityType.PLAYER, BetterParaglidersAttributes.TWO_HANDED_FACTOR.get());
-        event.add(EntityType.PLAYER, BetterParaglidersAttributes.RANGE_FACTOR.get());
-        event.add(EntityType.PLAYER, BetterParaglidersAttributes.BLOCK_FACTOR.get());
-        event.add(EntityType.PLAYER, BetterParaglidersAttributes.ROLL_FACTOR.get());
+        // Mobility Attributes
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get());
+
+        // Combat Attributes
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.RANGE_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get());
     }
 }

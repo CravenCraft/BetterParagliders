@@ -2,6 +2,7 @@ buildscript {
     repositories {
         // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
         maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = "https://repo.spongepowered.org/maven" }
         mavenCentral()
     }
     dependencies {
@@ -16,7 +17,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.3.0-1.18.2'
+version = "${project.mod_version}"
 group = 'com.cravencraft.betterparagliders' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'betterparagliders'
 
@@ -25,13 +26,18 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: "${project.minecraft_version}"
+
     runs {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'betterparagliders'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+            args '-mixin.config=betterparagliders.mixins.json'
+
             mods {
                 betterparagliders {
                     source sourceSets.main
@@ -44,6 +50,10 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'betterparagliders'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+            args '-mixin.config=betterparagliders.mixins.json'
+
             mods {
                 betterparagliders {
                     source sourceSets.main
@@ -54,6 +64,9 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+            args '-mixin.config=betterparagliders.mixins.json'
             property 'forge.enabledGameTestNamespaces', 'betterparagliders'
             mods {
                 betterparagliders {
@@ -66,6 +79,9 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+            args '-mixin.config=betterparagliders.mixins.json'
             args '--mod', 'betterparagliders', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
                 betterparagliders {
@@ -86,15 +102,13 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.2.0'
+    minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:paragliders-289240:4478246")
+    implementation fg.deobf("curse.maven:paragliders-289240:${project.paraglider_version}")
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim_version}")
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
-    implementation fg.deobf('maven.modrinth:better-combat:1.6.2+1.18.2-forge')
-    implementation fg.deobf('maven.modrinth:combat-roll:1.1.5+1.18.2-forge')
-    implementation fg.deobf('curse.maven:architectury-419699:4521465')
+    implementation fg.deobf("maven.modrinth:better-combat:${project.better_combat_version}")
 }
 
 jar {
@@ -107,7 +121,7 @@ jar {
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "betterparagliderssareus",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConnector"          : "net.cravencraft.betterparagliders.MixinConnector"
+                "MixinConfigs"            : "betterparagliders.mixins.json"
         ])
     }
 }

@@ -1,6 +1,7 @@
-package net.cravencraft.betterparagliders.mixins;
+package net.cravencraft.betterparagliders.mixins.paragliders.client;
 
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -54,7 +55,8 @@ public abstract class InGameStaminaWheelRendererMixin extends StaminaWheelRender
             this.prevStamina = stamina;
             Color color = StaminaWheelConstants.DEPLETED_1.blend(StaminaWheelConstants.DEPLETED_2, StaminaWheelConstants.cycle(System.currentTimeMillis(), h.isDepleted() ? 600L : 300L));
             PlayerState state = h.getState();
-            int stateChange = (state.isConsume()) ? state.change() - totalActionStaminaCost : -totalActionStaminaCost;
+            int stateChange = CalculateStaminaUtils.getModifiedStateChange(h.player, state);
+            stateChange = (state.isConsume()) ? stateChange - totalActionStaminaCost : -totalActionStaminaCost;
             StaminaWheelRenderer.WheelLevel[] var14 = StaminaWheelRenderer.WheelLevel.values();
             int var7 = var14.length;
 

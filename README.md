@@ -38,13 +38,22 @@ right click abilities) will now drain stamina. Here's a short list of everything
   - **roll_factor**
 
 ## Mod Dependencies
-- [Paragliders](https://www.curseforge.com/minecraft/mc-mods/paragliders/files/4478246) (1.18.2)
-- [Better Combat](https://www.curseforge.com/minecraft/mc-mods/better-combat-by-daedelus/files/4428885) (1.18.2)
-- [Combat Roll](https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428900) (1.18.2)
+- [Paragliders](https://www.curseforge.com/minecraft/mc-mods/paragliders/files/4478230) (1.19.2)
+- [Better Combat](https://www.curseforge.com/minecraft/mc-mods/better-combat-by-daedelus/files/4534619) (1.19.2)
+- [Combat Roll](https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428898) (1.19.2)
 
 ## Install Instructions
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
 into your minecraft mods folder along with this one, and everything should work fine!
+
+## V0.4.0 - The Configuration & Parameter Update!
+- Added a server and client config (though the client config is purely a placeholder for now).
+- Updated Shield stamina costs
+- Added a proper mod version check so now the mod will ensure the proper version of every mod is installed.
+- Made the difficult choice to remove Combat Roll support. Makes supporting multiple versions more difficult,
+    and just increases the scope of this mod to more than it truly needs to be.
+- Refactored & Reorganized a LOT of code. Things are much nicer now, and updates/ports will be a lot easier
+    in the future.
 
 ## V0.3.0
 - Optimized network code a bit more. Should be effected less by lag spikes on servers now.
@@ -78,4 +87,4 @@ into your minecraft mods folder along with this one, and everything should work 
 - Fixed a MASSIVE bug in multiplayer where players would sometimes share the same stamina
 
 ## V0.1.0
-First official version of this mod. Has some pretty basic support of all basic attacks, blocking, and rolling.
+- First official version of this mod. Has some pretty basic support of all basic attacks, blocking, and rolling.
