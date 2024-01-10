@@ -10,19 +10,11 @@ right click abilities) will now drain stamina. Here's a short list of everything
 - **Blocking** - Blocking drains stamina based on the amount of damage absorbed by the block. The cooldown for a shield
     is now removed until the player's stamina is completely depleted. It will be available again once the player regains
     all their stamina.
-- **Rolling** - The Combat Roll mod is also a dependency of this mod! As such, it drains stamina as well based on the
-    player's armor value. Higher armor values equals higher roll stamina cost. However, to combat this the enchantments
-    have now been reworked as well. Multi-Roll now decreases the amount of stamina drained per roll. The roll cooldown
-    has also been reworked to be dependent on armor values instead of a base amount. Higher values equals a longer
-    cooldown between rolls (think fat rolling in Dark Souls). To combat this Acrobat has been slightly tweaked to 
-    decrease the cooldown time even with the armor value factored in. Higher enchantment levels equals lower stamina 
-    cost and cooldown times!
 
 ## Other Features
-- **Config File** - The server config file for this mod will be in the same location as the one for Paragliders.
-  Here you can find various settings to increase or reduce the amount of stamina each action consumes. By default,
-  everything is set to 1.0. Increasing to 2.0 will **double** the amount of stamina consumed, and decreasing to 0.0 will
-  **completely remove** stamina consumption from this action entirely.
+- **Config File** - The server config file for this mod will contain various settings to increase or reduce the amount 
+  of stamina each action consumes, as well as what type of effects running out of stamina will give the player 
+  (as well as the intensity of said effects).
   > YOUR_WORLD_SAVE/serverconfig/betterparagliders-server.toml
 
 - **Attributes** - This mod contains multiple attributes. Each with a default value set to 1.0 and a range 
@@ -30,23 +22,31 @@ right click abilities) will now drain stamina. Here's a short list of everything
   This was implemented in order for this mod to have compatibility with RPG mods such as 
   [Pufferfish's Skills](https://www.curseforge.com/minecraft/mc-mods/puffish-skills) and
   [Project MMO](https://www.curseforge.com/minecraft/mc-mods/project-mmo).
-  - **melee_factor**
-  - **one_handed_factor**
-  - **two_handed_factor**
-  - **range_factor**
-  - **block_factor**
-  - **roll_factor**
+  - **sprinting_stamina_reduction**
+  - **swimming_stamina_reduction**
+  - **idle_stamina_regen**
+  - **submerged_stamina_regen**
+  - **water_breathing_stamina_regen**
+  - **base_melee_stamina_reduction**
+  - **two_handed_stamina_reduction**
+  - **one_handed_stamina_reduction**
+  - **range_stamina_reduction**
+  - **block_stamina_reduction**
 
 ## Mod Dependencies
-- [Paragliders](https://www.curseforge.com/minecraft/mc-mods/paragliders/files/4478230) (1.19.2)
-- [Better Combat](https://www.curseforge.com/minecraft/mc-mods/better-combat-by-daedelus/files/4534619) (1.19.2)
-- [Combat Roll](https://www.curseforge.com/minecraft/mc-mods/combat-roll/files/4428898) (1.19.2)
+- [Paragliders](https://www.curseforge.com/minecraft/mc-mods/paragliders/)
+- [Better Combat](https://www.curseforge.com/minecraft/mc-mods/better-combat-by-daedelus/)
 
 ## Install Instructions
-This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
-into your minecraft mods folder along with this one, and everything should work fine!
+This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install the 
+latest versions for the respective minecraft version along with this one, and everything should work fine!
 
 ## V0.4.0 - The Configuration & Parameter Update!
+- Added a server and client config (though the client config is purely a placeholder for now).
+- Updated Shield stamina costs
+- Added a proper mod version check so now the mod will ensure the proper version of every mod is installed.
+- Made the difficult choice to remove Combat Roll support. Makes supporting multiple versions more difficult, and just increases the scope of this mod to more than it truly needs to be.
+- Refactored & Reorganized a LOT of code. Things are much nicer now, and updates/ports will be a lot easier in the future.
 
 ## V0.3.0
 - Optimized network code a bit more. Should be effected less by lag spikes on servers now.
