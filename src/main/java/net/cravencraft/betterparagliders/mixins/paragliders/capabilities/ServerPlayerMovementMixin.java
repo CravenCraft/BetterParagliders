@@ -3,7 +3,9 @@ package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.config.ConfigManager;
 import net.cravencraft.betterparagliders.config.ServerConfig;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,6 +20,7 @@ import tictim.paraglider.capabilities.PlayerState;
 import tictim.paraglider.capabilities.ServerPlayerMovement;
 
 import java.util.List;
+import java.util.UUID;
 
 @Mixin(ServerPlayerMovement.class)
 public abstract class ServerPlayerMovementMixin extends PlayerMovement implements PlayerMovementInterface {
@@ -96,7 +99,7 @@ public abstract class ServerPlayerMovementMixin extends PlayerMovement implement
                 }
                 else {
                     if (this.player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.displayClientMessage(Component.literal("Effect with ID " + effects.get(i) + " does not exist."), true);
+                        serverPlayer.sendMessage(new TextComponent("Effect with ID " + effects.get(i) + " does not exist."), ChatType.GAME_INFO, UUID.randomUUID());
                     }
                 }
 
