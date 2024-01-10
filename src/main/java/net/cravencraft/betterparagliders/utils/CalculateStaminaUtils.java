@@ -6,11 +6,9 @@ import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.config.ConfigManager;
 import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import org.lwjgl.system.MathUtil;
 import tictim.paraglider.capabilities.PlayerState;
 
 public class CalculateStaminaUtils {
@@ -47,9 +45,6 @@ public class CalculateStaminaUtils {
 
         totalStaminaDrain -= player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
 
-        //TODO: Remove this logger before merging to release
-//        BetterParaglidersMod.LOGGER.info("TOTAL STAMINA DRAIN: " + totalStaminaDrain);
-
         return (int) Math.ceil(totalStaminaDrain);
     }
 
@@ -63,19 +58,6 @@ public class CalculateStaminaUtils {
      */
     public static int calculateRangeStaminaCost(LocalPlayer player) {
         return (int) ((baseRangeStaminaCost * ConfigManager.SERVER_CONFIG.rangeStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.RANGE_STAMINA_REDUCTION.get()));
-    }
-
-    /**
-     * TODO: Work on this so that blocks drain more stamina, and that they're also drained based on a player's
-     *       current armor value. Higher armor value = less stamina used to block, but more used to roll.
-     *       Add config support for decreasing/increasing stamina consumption.
-     *
-     * @param serverPlayer
-     * @param amount
-     * @return
-     */
-    public static int calculateBlockStaminaCost(ServerPlayer serverPlayer, float amount) {
-        return Math.round((float)((amount * ConfigManager.SERVER_CONFIG.blockStaminaConsumption() + 10) - serverPlayer.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get())));
     }
 
     /**
