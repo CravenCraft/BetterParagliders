@@ -1,14 +1,10 @@
-package net.cravencraft.betterparagliders.mixins;
+package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
 import net.bettercombat.logic.PlayerAttackProperties;
-import net.combatroll.client.MinecraftClientExtension;
-import net.combatroll.client.RollManager;
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
 import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -25,22 +21,14 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
     private boolean syncActionStamina;
     private int totalActionStaminaCost;
     private int comboCount;
-    private RollManager rollManager;
 
     public ClientPlayerMovementMixin(Player player) {
         super(player);
     }
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    public void constructorHead(Player player, CallbackInfo ci) {
-        this.rollManager = ((MinecraftClientExtension)Minecraft.getInstance()).getRollManager();
-    }
-
     @Inject(method = "update", at = @At(value = "HEAD"), remap=false)
     public void update(CallbackInfo ci) {
         calculateTotalStaminaCost();
-        calculateRollStaminaCost();
-        disableRoll();
         this.setTotalActionStaminaCost(this.totalActionStaminaCost);
     }
 
@@ -81,7 +69,6 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
      */
     private void calculateMeleeStaminaCost() {
         int currentCombo = ((PlayerAttackProperties) player).getComboCount();
-//        BetterParaglidersMod.LOGGER.info("CURRENT COMBO: " + currentCombo);
         this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
 
         if (currentCombo > 0 && currentCombo != this.comboCount) {
@@ -96,32 +83,6 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
         if (player.getUseItem().getItem() instanceof  ProjectileWeaponItem projectileWeaponItem) {
             this.totalActionStaminaCost = CalculateStaminaUtils.calculateRangeStaminaCost((LocalPlayer) this.player);
             this.syncActionStamina = true;
-        }
-    }
-
-    /**
-     * Calculates the amount of stamina a roll will cost. Factors in weight and enchantments as well.
-     *
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     */
-    private void calculateRollStaminaCost() {
-        //TODO: Put fire out after x amount of rolls?
-        if (this.rollManager.isRolling()) {
-
-            this.totalActionStaminaCost = CalculateStaminaUtils.calculateRollStaminaCost((LocalPlayer) this.player);
-            this.syncActionStamina = true;
-        }
-    }
-
-    //TODO: Make this single line maybe
-    public void disableRoll() {
-        if(!this.player.isCreative() && this.isDepleted()){
-            this.rollManager.isEnabled = false;
-        }
-        else {
-            this.rollManager.isEnabled = true;
         }
     }
 }

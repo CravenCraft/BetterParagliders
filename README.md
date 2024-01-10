@@ -46,6 +46,8 @@ right click abilities) will now drain stamina. Here's a short list of everything
 This mod should be pretty straightforward. Just follow the links for the mod dependencies listed above, install them
 into your minecraft mods folder along with this one, and everything should work fine!
 
+## V0.4.0 - The Configuration & Parameter Update!
+
 ## V0.3.0
 - Optimized network code a bit more. Should be effected less by lag spikes on servers now.
 - Added **effects** and **effects_strength** to the server config to allow users to add _any_ effect they want

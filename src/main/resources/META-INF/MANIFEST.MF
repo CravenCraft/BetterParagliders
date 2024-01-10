@@ -1,1 +1,0 @@
-MixinConnector: net.cravencraft.betterparagliders.MixinConnector

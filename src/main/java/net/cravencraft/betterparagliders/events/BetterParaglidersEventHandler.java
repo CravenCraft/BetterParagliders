@@ -1,6 +1,8 @@
 package net.cravencraft.betterparagliders.events;
 
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
+import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
+import net.cravencraft.betterparagliders.config.ConfigManager;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToClientMsg;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +26,9 @@ public final class BetterParaglidersEventHandler {
     @SubscribeEvent
     public static void ShieldBlockEvent(ShieldBlockEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            SyncActionToClientMsg msg = new SyncActionToClientMsg((int) event.getBlockedDamage(), true);
+            int blockCost = Math.round((float)((event.getBlockedDamage() * ConfigManager.SERVER_CONFIG.blockStaminaConsumption() + 10) - player.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get())));
+
+            SyncActionToClientMsg msg = new SyncActionToClientMsg(blockCost, true);
             if(ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Sending packet {} to player {}", msg, player);
             ModNet.NET.send(PacketDistributor.PLAYER.with(() -> player), msg);
         }
