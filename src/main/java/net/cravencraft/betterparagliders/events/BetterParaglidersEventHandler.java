@@ -1,17 +1,15 @@
 package net.cravencraft.betterparagliders.events;
 
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
-import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
-import net.cravencraft.betterparagliders.config.ConfigManager;
-import net.cravencraft.betterparagliders.network.ModNet;
-import net.cravencraft.betterparagliders.network.SyncActionToClientMsg;
+import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
-import tictim.paraglider.ModCfg;
-import tictim.paraglider.ParagliderMod;
+import tictim.paraglider.capabilities.PlayerMovement;
 
 @Mod.EventBusSubscriber(modid = BetterParaglidersMod.MOD_ID)
 public final class BetterParaglidersEventHandler {
@@ -26,11 +24,24 @@ public final class BetterParaglidersEventHandler {
     @SubscribeEvent
     public static void ShieldBlockEvent(ShieldBlockEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            int blockCost = Math.round((float)((event.getBlockedDamage() * ConfigManager.SERVER_CONFIG.blockStaminaConsumption() + 10) - player.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get())));
+            ((PlayerMovementInterface) PlayerMovement.of(player)).calculateBlockStaminaCostServerSide(event.getBlockedDamage());
+        }
+    }
 
-            SyncActionToClientMsg msg = new SyncActionToClientMsg(blockCost, true);
-            if(ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Sending packet {} to player {}", msg, player);
-            ModNet.NET.send(PacketDistributor.PLAYER.with(() -> player), msg);
+    /**
+     * If the player's stamina is depleted, then cancel the bow/crossbow draw event.
+     *
+     * @param event
+     */
+    @SubscribeEvent
+    public static void cancelBowDraw(PlayerInteractEvent event) {
+        if (event.getItemStack().getItem() instanceof  ProjectileWeaponItem && PlayerMovement.of(event.getEntity()).isDepleted() && !event.getEntity().isCreative()) {
+            if (CrossbowItem.isCharged(event.getItemStack())) {
+                event.setCanceled(false);
+            }
+            else {
+                event.setCanceled(true);
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ public class ServerConfig {
                 .defineInRange("oneHandedStaminaConsumption", 2.5, 0.0, 10.0);
         RANGE_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
                 .defineInRange("rangeStaminaConsumption", 1.0, 0.0, 10.0);
-        BLOCK_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
+        BLOCK_STAMINA_CONSUMPTION = server.comment("The base amount of stamina blocking with a shield will cost.")
                 .defineInRange("blockStaminaConsumption", 0.75, 0.0, 10.0);
         DEPLETION_EFFECT_LIST = server
                 .comment("The effect ID that will be applied when a player runs out of stamina (default is Mining Fatigue and Weakness respectively).")
