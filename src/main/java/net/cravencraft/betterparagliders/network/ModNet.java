@@ -48,7 +48,7 @@ public class ModNet {
             }
 
             //TODO: Does this work?
-            ((PlayerMovementInterface) serverPlayerMovement).setTotalActionStaminaCostServerSide(msg.totalActionStaminaCost());
+            ((PlayerMovementInterface) serverPlayerMovement).calculateMeleeStaminaCostServerSide(msg.comboCount());
         });
     }
 
@@ -59,13 +59,10 @@ public class ModNet {
             ctx.get().setPacketHandled(true);
             LocalPlayer localPlayer = Minecraft.getInstance().player;
             if (localPlayer == null) return;
-//            UpdatedClientPlayerMovement updatedClientPlayerMovement = (UpdatedClientPlayerMovement) UpdatedPlayerMovement.getInstance(localPlayer);
             ClientPlayerMovement clientPlayerMovement = (ClientPlayerMovement) PlayerMovement.of(localPlayer);
             if (clientPlayerMovement != null) {
                 if (ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Received {}", msg);
-//                msg.copyTo(clientPlayerMovement);
                 ((PlayerMovementInterface) clientPlayerMovement).setTotalActionStaminaCostClientSide(msg.totalActionStaminaCost());
-                ((PlayerMovementInterface) clientPlayerMovement).syncActionStaminaClientSide(msg.syncActionStamina());
             }
             else {
                 ParagliderMod.LOGGER.error("Couldn't handle packet {}, capability not found", msg);

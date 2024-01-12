@@ -84,13 +84,13 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
 
         if (this.totalActionStaminaCost > 0) {
             this.totalActionStaminaCost--;
-        }
 
-        if (this.player instanceof ServerPlayer) {
-            this.setTotalActionStaminaCostServerSide(this.totalActionStaminaCost);
-        }
-        else if (this.player instanceof LocalPlayer) {
-            this.setTotalActionStaminaCostClientSide(this.totalActionStaminaCost);
+            if (this.player instanceof ServerPlayer) {
+                this.setTotalActionStaminaCostServerSide(this.totalActionStaminaCost);
+            }
+            else if (this.player instanceof LocalPlayer) {
+                this.setTotalActionStaminaCostClientSide(this.totalActionStaminaCost);
+            }
         }
 
         ci.cancel();

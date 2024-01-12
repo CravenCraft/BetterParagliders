@@ -8,6 +8,8 @@ public interface PlayerMovementInterface {
      * ServerPlayerMovement
      */
     void setTotalActionStaminaCostServerSide(int totalActionStaminaCost);
+    void calculateMeleeStaminaCostServerSide(int comboCount);
+    void calculateBlockStaminaCostServerSide(float blockedAmount);
 
     /**
      * PlayerMovement
@@ -19,5 +21,4 @@ public interface PlayerMovementInterface {
      * ClientPlayerMovement
      */
     void setTotalActionStaminaCostClientSide(int totalActionStaminaCost);
-    void syncActionStaminaClientSide(boolean syncActionStamina);
 }
