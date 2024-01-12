@@ -2,6 +2,7 @@ package net.cravencraft.betterparagliders.utils;
 
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
+import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -27,7 +28,7 @@ public class CalculateStaminaUtils {
      * @param staminaCost
      */
     public static void addDatapackStaminaOverride(String type, String itemStack, double staminaCost) {
-
+        BetterParaglidersMod.LOGGER.info("ADDING A " + type + " ITEM " + itemStack + " WITH A STAMINA COST OF " + staminaCost);
         switch (type) {
             case "shield":
                 DATAPACK_SHIELD_STAMINA_OVERRIDES.put(itemStack, staminaCost);
