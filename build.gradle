@@ -109,8 +109,10 @@ dependencies {
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim_version}")
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}")
     implementation fg.deobf("maven.modrinth:better-combat:${project.better_combat_version}")
+    // TODO: Comment below back out
 //    implementation fg.deobf('curse.maven:architectury-419699:4555749')
 //    implementation fg.deobf("curse.maven:simply-swords-659887:4553225")
+//    implementation fg.deobf("curse.maven:shield-expansion-583318:4885484")
 }
 
 jar {

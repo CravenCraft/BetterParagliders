@@ -4,7 +4,7 @@ loaderVersion="[43,)"
 license="All rights reserved"
 [[mods]]
 modId="betterparagliders"
-version="${file.jarVersion}
+version="${file.jarVersion}"
 displayName="Better Paragliders"
 logoFile="betterparagliders.png"
 credits="Thanks for this example mod goes to Java"
