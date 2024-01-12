@@ -1,6 +1,5 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.minecraft.client.player.LocalPlayer;
@@ -87,11 +86,9 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
             this.totalActionStaminaCost--;
 
             if (this.player instanceof ServerPlayer) {
-//                BetterParaglidersMod.LOGGER.info("SERVER SIDE ACTION STAMINA COST: " + this.totalActionStaminaCost);
                 this.setTotalActionStaminaCostServerSide(this.totalActionStaminaCost);
             }
             else if (this.player instanceof LocalPlayer) {
-//                BetterParaglidersMod.LOGGER.info("CLIENT SIDE ACTION STAMINA COST: " + this.totalActionStaminaCost);
                 this.setTotalActionStaminaCostClientSide(this.totalActionStaminaCost);
             }
         }

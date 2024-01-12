@@ -14,6 +14,7 @@ public class ServerConfig {
     private static ForgeConfigSpec.DoubleValue ONE_HANDED_STAMINA_CONSUMPTION;
     private static ForgeConfigSpec.DoubleValue RANGE_STAMINA_CONSUMPTION;
     private static ForgeConfigSpec.DoubleValue BLOCK_STAMINA_CONSUMPTION;
+    private static ForgeConfigSpec.DoubleValue PROJECTILE_STAMINA_CONSUMPTION;
     private static ForgeConfigSpec.ConfigValue<List<? extends Integer>> DEPLETION_EFFECT_LIST;
     private static ForgeConfigSpec.ConfigValue<List<? extends Integer>> DEPLETION_EFFECT_STRENGTH_LIST;
 
@@ -23,24 +24,25 @@ public class ServerConfig {
     public static double twoHandedStaminaConsumption() { return TWO_HANDED_STAMINA_CONSUMPTION.get(); }
     public static double oneHandedStaminaConsumption() { return ONE_HANDED_STAMINA_CONSUMPTION.get(); }
     public static double rangeStaminaConsumption() { return RANGE_STAMINA_CONSUMPTION.get(); }
-    public static double blockStaminaConsumption() {
-        return BLOCK_STAMINA_CONSUMPTION.get();
-    }
+    public static double blockStaminaConsumption() { return BLOCK_STAMINA_CONSUMPTION.get(); }
+    public static double projectileStaminaConsumption() { return PROJECTILE_STAMINA_CONSUMPTION.get(); }
     public static List<Integer> depletionEffectList() { return (List<Integer>) DEPLETION_EFFECT_LIST.get(); }
     public static List<Integer> depletionEffectStrengthList() { return (List<Integer>) DEPLETION_EFFECT_STRENGTH_LIST.get(); }
 
     public ServerConfig(ForgeConfigSpec.Builder server) {
         server.push("stamina");
         MELEE_STAMINA_CONSUMPTION = server.comment("How much more/less stamina is consumed from melee attacks.")
-                .defineInRange("meleeStaminaConsumption", 1.0, 0.0, 10.0);
+                .defineInRange("melee_stamina_consumption", 1.0, 0.0, 10.0);
         TWO_HANDED_STAMINA_CONSUMPTION = server.comment("How much more/less stamina is consumed from two handed attacks (stacks with MELEE_STAMINA_CONSUMPTION).")
-                .defineInRange("twoHandedStaminaConsumption", 2.0, 0.0, 10.0);
+                .defineInRange("two_handed_stamina_consumption", 2.0, 0.0, 10.0);
         ONE_HANDED_STAMINA_CONSUMPTION = server.comment("How much more/less stamina is consumed from one handed (and dual wielding) attacks (stacks with MELEE_STAMINA_CONSUMPTION).")
-                .defineInRange("oneHandedStaminaConsumption", 2.5, 0.0, 10.0);
+                .defineInRange("one_handed_stamina_consumption", 2.5, 0.0, 10.0);
         RANGE_STAMINA_CONSUMPTION = server.comment("The base amount of stamina a range attack will cost.")
-                .defineInRange("rangeStaminaConsumption", 1.0, 0.0, 10.0);
+                .defineInRange("ranged_stamina_consumption", 1.0, 0.0, 10.0);
         BLOCK_STAMINA_CONSUMPTION = server.comment("The base amount of stamina blocking with a shield will cost.")
-                .defineInRange("blockStaminaConsumption", 0.75, 0.0, 10.0);
+                .defineInRange("block_stamina_consumption", 10, 0.0, 100.0);
+        PROJECTILE_STAMINA_CONSUMPTION = server.comment("The base amount of stamina blocking a projectile will cost (in addition to blocking cost).")
+                .defineInRange("projectile_stamina_consumption", 5, 0.0, 100.0);
         DEPLETION_EFFECT_LIST = server
                 .comment("The effect ID that will be applied when a player runs out of stamina (default is Mining Fatigue and Weakness respectively).")
                 .comment("Refer to https://minecraft.fandom.com/wiki/Effect#Effect_list for a list of the effects and their corresponding IDs")

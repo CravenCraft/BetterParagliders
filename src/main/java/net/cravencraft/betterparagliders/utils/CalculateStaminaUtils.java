@@ -2,9 +2,7 @@ package net.cravencraft.betterparagliders.utils;
 
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
-import net.cravencraft.betterparagliders.config.ConfigManager;
 import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -16,7 +14,9 @@ import java.util.Map;
 
 public class CalculateStaminaUtils {
 
-    private static Map<String, Double> datapackStaminaOverrides = new HashMap();
+    public static Map<String, Double> DATAPACK_MELEE_STAMINA_OVERRIDES = new HashMap();
+    public static Map<String, Double> DATAPACK_RANGED_STAMINA_OVERRIDES = new HashMap();
+    public static Map<String, Double> DATAPACK_SHIELD_STAMINA_OVERRIDES = new HashMap();
 
     private static final int baseRangeStaminaCost = 10;
 
@@ -26,9 +26,19 @@ public class CalculateStaminaUtils {
      * @param itemStack
      * @param staminaCost
      */
-    public static void addDatapackStaminaOverride(String itemStack, double staminaCost) {
-        BetterParaglidersMod.LOGGER.info("ADDING TO STAMINA OVERRIDE: " + itemStack + " + " + staminaCost);
-        datapackStaminaOverrides.put(itemStack, staminaCost);
+    public static void addDatapackStaminaOverride(String type, String itemStack, double staminaCost) {
+
+        switch (type) {
+            case "shield":
+                DATAPACK_SHIELD_STAMINA_OVERRIDES.put(itemStack, staminaCost);
+                break;
+            case "ranged_weapon":
+                DATAPACK_RANGED_STAMINA_OVERRIDES.put(itemStack, staminaCost);
+                break;
+            case "melee_weapon":
+            default:
+                DATAPACK_MELEE_STAMINA_OVERRIDES.put(itemStack, staminaCost);
+        }
     }
 
     /**
@@ -44,19 +54,12 @@ public class CalculateStaminaUtils {
      */
     public static int calculateMeleeStaminaCost(Player player, int currentCombo) {
         double totalStaminaDrain;
-        ServerConfig serverConfig = ConfigManager.SERVER_CONFIG;
         AttackHand attackHand = PlayerAttackHelper.getCurrentAttack(player, currentCombo);
         boolean isTwoHanded = attackHand.attributes().isTwoHanded();
+        String attackingItemId = attackHand.itemStack().getItem().getDescriptionId().replace("item.", "");
 
-        for (Map.Entry<String, Double> entry : datapackStaminaOverrides.entrySet()) {
-            BetterParaglidersMod.LOGGER.info("DATAPACK OVERRIDE INFO: " + entry.getKey() + " + " + entry.getValue());
-        }
-
-        BetterParaglidersMod.LOGGER.info("CURRENT ATTACKING WEAPON: " + attackHand.itemStack().getItem().toString());
-        if (datapackStaminaOverrides.containsKey(attackHand.itemStack().getItem().toString())) {
-            double staminaOverride = datapackStaminaOverrides.get(attackHand.itemStack().getItem().toString());
-            BetterParaglidersMod.LOGGER.info("STAMINA OVERRIDE FOR " + attackHand.itemStack() + " IS " + staminaOverride);
-            totalStaminaDrain = staminaOverride * serverConfig.meleeStaminaConsumption();
+        if (DATAPACK_MELEE_STAMINA_OVERRIDES.containsKey(attackingItemId)) {
+            totalStaminaDrain = DATAPACK_MELEE_STAMINA_OVERRIDES.get(attackingItemId).intValue();
 
             if (isTwoHanded) {
                 totalStaminaDrain -= player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
@@ -74,13 +77,13 @@ public class CalculateStaminaUtils {
                     .filter(attributeModifier -> attributeModifier.getName().contains("Weapon") || attributeModifier.getName().contains("Tool"))
                     .findFirst().get().getAmount();
 
-            totalStaminaDrain = (weaponAttackDamage + reachFactor) * serverConfig.meleeStaminaConsumption();
+            totalStaminaDrain = (weaponAttackDamage + reachFactor) * ServerConfig.meleeStaminaConsumption();
 
             if (isTwoHanded) {
-                totalStaminaDrain = (totalStaminaDrain * serverConfig.twoHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
+                totalStaminaDrain = (totalStaminaDrain * ServerConfig.twoHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
             }
             else {
-                totalStaminaDrain = (totalStaminaDrain * serverConfig.oneHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
+                totalStaminaDrain = (totalStaminaDrain * ServerConfig.oneHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
             }
         }
 
@@ -90,15 +93,44 @@ public class CalculateStaminaUtils {
     }
 
     /**
-     * TODO: Want to flesh this out a little more. Maybe set a high initial cost to draw the weapon back,
-     *       then a steady drain from there if it's a bow, or no drain at all if it's a crossbow.
-     *       Add config support for decreasing/increasing stamina consumption.
+     * Will drain stamina based on the amount either the default configured amount for the bow being used,
+     * or based on a datapack value overriding that amount.
      *
      * @param player
      * @return
      */
     public static int calculateRangeStaminaCost(Player player) {
-        return (int) ((baseRangeStaminaCost * ConfigManager.SERVER_CONFIG.rangeStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.RANGE_STAMINA_REDUCTION.get()));
+        int totalStaminaConsumption;
+        String bowItem = player.getUseItem().getItem().getDescriptionId().replace("item.", "");
+        if (DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(bowItem)) {
+            totalStaminaConsumption = DATAPACK_RANGED_STAMINA_OVERRIDES.get(bowItem).intValue();
+        }
+        else {
+            totalStaminaConsumption = (int) (baseRangeStaminaCost * ServerConfig.rangeStaminaConsumption());
+        }
+        return (int) (totalStaminaConsumption - player.getAttributeValue(BetterParaglidersAttributes.RANGE_STAMINA_REDUCTION.get()));
+    }
+
+    /**
+     * Will drain stamina based on the amount either the default configured amount for the shield being used,
+     * or based on a datapack value overriding that amount.
+     *
+     * @param player
+     * @param blockedDamage
+     * @return
+     */
+    public static int calculateBlockStaminaCost(Player player, float blockedDamage) {
+        int totalStaminaConsumption = (int) blockedDamage;
+        String shieldItem = player.getUseItem().getItem().getDescriptionId().replace("item.", "");
+
+        if (DATAPACK_SHIELD_STAMINA_OVERRIDES.containsKey(shieldItem)) {
+            totalStaminaConsumption += DATAPACK_SHIELD_STAMINA_OVERRIDES.get(shieldItem).intValue();
+        }
+        else {
+            totalStaminaConsumption += (int) (ServerConfig.blockStaminaConsumption());
+        }
+
+        return Math.round((float)(totalStaminaConsumption - player.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get())));
     }
 
     /**
