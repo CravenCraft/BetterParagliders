@@ -24,7 +24,7 @@ public class BetterParaglidersMod
     public BetterParaglidersMod()
     {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        Contents.registerEventHandlers(eventBus);
+//        Contents.registerEventHandlers(eventBus); // TODO: Not needed?
         BetterParaglidersAttributes.registerEventHandlers(eventBus);
         ModNet.init();
 

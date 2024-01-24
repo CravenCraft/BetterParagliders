@@ -1,6 +1,7 @@
 package net.cravencraft.betterparagliders.network;
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -9,10 +10,9 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
-import tictim.paraglider.ModCfg;
 import tictim.paraglider.ParagliderMod;
-import tictim.paraglider.capabilities.ClientPlayerMovement;
-import tictim.paraglider.capabilities.PlayerMovement;
+import tictim.paraglider.forge.capability.PlayerMovementProvider;
+import tictim.paraglider.impl.stamina.BotWStamina;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -41,14 +41,15 @@ public class ModNet {
         context.get().setPacketHandled(true);
         context.get().enqueueWork(() -> {
             ServerPlayer player = context.get().getSender();
-            PlayerMovement serverPlayerMovement = PlayerMovement.of(player);
+//            PlayerMovement serverPlayerMovement = PlayerMovement.of(player);
+            BotWStamina botWStamina = (BotWStamina) PlayerMovementProvider.of(player).stamina();
             if(player==null){
                 ParagliderMod.LOGGER.error("Cannot handle SyncMovementMsg: Wrong side");
                 return;
             }
 
             //TODO: Does this work?
-            ((PlayerMovementInterface) serverPlayerMovement).calculateMeleeStaminaCostServerSide(msg.comboCount());
+            ((StaminaOverride) botWStamina).calculateMeleeStaminaCostServerSide(msg.comboCount());
         });
     }
 
@@ -59,10 +60,10 @@ public class ModNet {
             ctx.get().setPacketHandled(true);
             LocalPlayer localPlayer = Minecraft.getInstance().player;
             if (localPlayer == null) return;
-            ClientPlayerMovement clientPlayerMovement = (ClientPlayerMovement) PlayerMovement.of(localPlayer);
-            if (clientPlayerMovement != null) {
-                if (ModCfg.traceMovementPacket()) ParagliderMod.LOGGER.debug("Received {}", msg);
-                ((PlayerMovementInterface) clientPlayerMovement).setTotalActionStaminaCostClientSide(msg.totalActionStaminaCost());
+//            ClientPlayerMovement clientPlayerMovement = (ClientPlayerMovement) PlayerMovement.of(localPlayer);
+            BotWStamina botWStamina = (BotWStamina) PlayerMovementProvider.of(localPlayer).stamina();
+            if (localPlayer != null) {
+                ((StaminaOverride) botWStamina).setTotalActionStaminaCostClientSide(msg.totalActionStaminaCost());
             }
             else {
                 ParagliderMod.LOGGER.error("Couldn't handle packet {}, capability not found", msg);

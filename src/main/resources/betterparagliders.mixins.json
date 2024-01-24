@@ -5,8 +5,9 @@
   "refmap": "epicparagliders.mixins.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "paragliders.capabilities.ServerPlayerMovementMixin",
-    "paragliders.capabilities.PlayerMovementMixin"
+    "paragliders.stamina.BotWStaminaMixin",
+    "paragliders.stamina.ServerBotWStaminaMixin",
+    "paragliders.utils.ParagliderUtilsMixin"
   ],
   "client": [
     "paragliders.client.InGameStaminaWheelRendererMixin",
