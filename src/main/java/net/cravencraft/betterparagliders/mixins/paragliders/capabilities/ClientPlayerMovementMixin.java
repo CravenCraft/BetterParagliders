@@ -1,7 +1,6 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
 import net.bettercombat.logic.PlayerAttackProperties;
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
 import net.minecraft.world.entity.player.Player;
@@ -37,7 +36,6 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement {
         this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
 
         if (currentCombo > 0 && currentCombo != this.comboCount) {
-            BetterParaglidersMod.LOGGER.info("CLIENT COMBO: " + this.comboCount);
             this.comboCount = currentCombo;
             ModNet.NET.sendToServer(new SyncActionToServerMsg(this.comboCount));
         }
