@@ -7,10 +7,12 @@ import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import tictim.paraglider.capabilities.PlayerState;
+import tictim.paraglider.api.movement.PlayerState;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static tictim.paraglider.api.movement.ParagliderPlayerStates.*;
 
 public class CalculateStaminaUtils {
 
@@ -140,19 +142,17 @@ public class CalculateStaminaUtils {
      * @return
      */
     public static int getModifiedStateChange(Player player, PlayerState playerState) {
-        switch (playerState) {
-            case IDLE:
-                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
-            case RUNNING:
-                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
-            case SWIMMING:
-                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
-            case UNDERWATER:
-                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
-            case BREATHING_UNDERWATER:
-                return (int) (playerState.change() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
-            default:
-                return playerState.change();
+        if (IDLE.equals(playerState)) {
+            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
+        } else if (RUNNING.equals(playerState)) {
+            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
+        } else if (SWIMMING.equals(playerState)) {
+            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
+        } else if (UNDERWATER.equals(playerState)) {
+            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
+        } else if (BREATHING_UNDERWATER.equals(playerState)) {
+            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
         }
+        return playerState.staminaDelta();
     }
 }

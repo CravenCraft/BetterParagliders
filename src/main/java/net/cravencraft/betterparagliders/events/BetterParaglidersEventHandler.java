@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
-import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
 import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +21,8 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import tictim.paraglider.capabilities.PlayerMovement;
+import tictim.paraglider.forge.capability.PlayerMovementProvider;
+import tictim.paraglider.impl.movement.PlayerMovement;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -107,7 +108,7 @@ public final class BetterParaglidersEventHandler {
     public static void cancelBowDraw(PlayerInteractEvent event) {
         if ((event.getItemStack().getItem() instanceof  ProjectileWeaponItem
                 || CalculateStaminaUtils.DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(event.getEntity().getUseItem().getItem().getDescriptionId().replace("item.", "")))
-                && PlayerMovement.of(event.getEntity()).isDepleted()
+                && PlayerMovementProvider.of(event.getEntity()).stamina().isDepleted()
                 && !event.getEntity().isCreative())
         {
 
@@ -128,10 +129,10 @@ public final class BetterParaglidersEventHandler {
      */
     private static void blockEventWork(ServerPlayer serverPlayer, float amount) {
         if (serverPlayer.getUseItem().getItem().getDescriptionId().contains("shield")) {
-            PlayerMovement playerMovement = PlayerMovement.of(serverPlayer);
+            PlayerMovement playerMovement = PlayerMovementProvider.of(serverPlayer);
 
-            if (!playerMovement.isDepleted()) {
-                ((PlayerMovementInterface) playerMovement).calculateBlockStaminaCostServerSide(amount);
+            if (!playerMovement.stamina().isDepleted()) {
+                ((StaminaOverride) playerMovement.stamina()).calculateBlockStaminaCostServerSide(amount);
             }
         }
     }

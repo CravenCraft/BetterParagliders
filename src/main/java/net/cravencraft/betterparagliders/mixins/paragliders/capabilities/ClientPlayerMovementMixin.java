@@ -1,20 +1,20 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
 import net.bettercombat.logic.PlayerAttackProperties;
-import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tictim.paraglider.capabilities.ClientPlayerMovement;
-import tictim.paraglider.capabilities.PlayerMovement;
+import tictim.paraglider.impl.movement.ClientPlayerMovement;
+import tictim.paraglider.impl.movement.PlayerMovement;
 
 @Mixin(ClientPlayerMovement.class)
-public abstract class ClientPlayerMovementMixin extends PlayerMovement implements PlayerMovementInterface {
-    private int totalActionStaminaCost;
+public abstract class ClientPlayerMovementMixin extends PlayerMovement {
+    @Shadow public abstract Player player();
     private int comboCount;
 
     public ClientPlayerMovementMixin(Player player) {
@@ -24,12 +24,6 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
     @Inject(method = "update", at = @At(value = "HEAD"), remap=false)
     public void update(CallbackInfo ci) {
         calculateMeleeStaminaCost();
-        this.setTotalActionStaminaCost(this.totalActionStaminaCost);
-    }
-
-    @Override
-    public void setTotalActionStaminaCostClientSide(int totalActionStaminaCost) {
-        this.totalActionStaminaCost = totalActionStaminaCost;
     }
 
     /**
@@ -38,7 +32,7 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
      * if the stamina needs to be updated.
      */
     private void calculateMeleeStaminaCost() {
-        int currentCombo = ((PlayerAttackProperties) player).getComboCount();
+        int currentCombo = ((PlayerAttackProperties) this.player()).getComboCount();
         this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
 
         if (currentCombo > 0 && currentCombo != this.comboCount) {
