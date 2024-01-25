@@ -1,14 +1,9 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.stamina;
 
 import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
-import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToClientMsg;
 import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -19,18 +14,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tictim.paraglider.api.movement.Movement;
+import tictim.paraglider.api.movement.ParagliderPlayerStates;
 import tictim.paraglider.api.vessel.VesselContainer;
 import tictim.paraglider.impl.movement.ServerPlayerMovement;
 import tictim.paraglider.impl.stamina.BotWStamina;
 import tictim.paraglider.impl.stamina.ServerBotWStamina;
 
-import java.util.List;
-
 @Mixin(ServerBotWStamina.class)
 public abstract class ServerBotWStaminaMixin extends BotWStamina implements StaminaOverride {
-
-    private int totalActionStaminaCost;
-    private boolean syncActionStamina;
     private Player player;
     private ServerPlayerMovement serverPlayerMovement;
 
@@ -58,23 +49,7 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
                     CalculateStaminaUtils.DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(player.getUseItem().getItem().getDescriptionId().replace("item.", ""))) {
                 calculateRangedStaminaCost();
             }
-
-            if (syncActionStamina) {
-                ModNet.NET.send(PacketDistributor.PLAYER.with(() -> serverPlayerMovement.player()), new SyncActionToClientMsg(this.totalActionStaminaCost));
-                this.syncActionStamina = false;
-            }
-
-            addEffects();
-            this.setTotalActionStaminaCost(this.totalActionStaminaCost);
-
-            //TODO: Would like to organize these better.
-            checkShieldDisable();
-            calculateRangedStaminaCost();
         }
-    }
-
-    public void setTotalActionStaminaCostServerSide(int totalActionStaminaCost) {
-        this.totalActionStaminaCost = totalActionStaminaCost;
     }
 
     /**
@@ -83,8 +58,7 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
      * if the stamina needs to be updated.
      */
     public void calculateMeleeStaminaCostServerSide(int comboCount) {
-        this.totalActionStaminaCost = CalculateStaminaUtils.calculateMeleeStaminaCost(this.player, comboCount);
-        this.syncActionStamina = true;
+        syncActionStamina(CalculateStaminaUtils.calculateMeleeStaminaCost(this.player, comboCount));
     }
 
     /**
@@ -93,16 +67,19 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
      * @param blockedDamage
      */
     public void calculateBlockStaminaCostServerSide(float blockedDamage) {
-        this.totalActionStaminaCost = CalculateStaminaUtils.calculateBlockStaminaCost(this.player, blockedDamage);
-        this.syncActionStamina = true;
+        syncActionStamina(CalculateStaminaUtils.calculateBlockStaminaCost(this.player, blockedDamage));
     }
 
     /**
      * Calculates the amount of stamina Shooting a bow or crossbow will cost.
      */
     public void calculateRangedStaminaCost() {
-        this.totalActionStaminaCost = CalculateStaminaUtils.calculateRangeStaminaCost(this.player);
-        this.syncActionStamina = true;
+        syncActionStamina(CalculateStaminaUtils.calculateRangeStaminaCost(this.player));
+    }
+
+    private void syncActionStamina(int actionStaminaCost) {
+        this.setTotalActionStaminaCost(actionStaminaCost);
+        ModNet.NET.send(PacketDistributor.PLAYER.with(() -> serverPlayerMovement.player()), new SyncActionToClientMsg(actionStaminaCost));
     }
 
     /**
@@ -111,7 +88,6 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
      */
     private void checkShieldDisable() {
 
-        //TODO: Just make an OR?
         if (this.player.getOffhandItem().getItem().getDescriptionId().contains("shield")) {
             modifyShieldCooldown(this.player.getOffhandItem().getItem());
         }
@@ -129,45 +105,15 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
      */
     private void modifyShieldCooldown( Item shieldItem) {
         if (this.player.getOffhandItem().getItem().getDescriptionId().contains("shield")) {
-            int recoveryRate = this.serverPlayerMovement.state().recoveryDelay();
-            int currentRecoveredAmount = this.serverPlayerMovement.stamina().maxStamina();
+            int recoveryRate = ParagliderPlayerStates.RECOVERY_DELAY;
+            int currentRecoveredAmount = this.serverPlayerMovement.stamina().stamina();
             float cooldownPercentage = player.getCooldowns().getCooldownPercent(shieldItem, 0.0F);
             int shieldRecoveryDelay = (int) (this.serverPlayerMovement.stamina().maxStamina() * (1 - cooldownPercentage));
+
             if (shieldRecoveryDelay > currentRecoveredAmount) {
                 player.getCooldowns().addCooldown(shieldItem, (this.serverPlayerMovement.stamina().maxStamina() - currentRecoveredAmount) / recoveryRate);
             }
         }
 
-    }
-
-    /**
-     * Adds all the effects to be applied whenever the player's stamina is depleted.
-     */
-    protected void addEffects() {
-        if(!this.player.isCreative() && this.isDepleted()) {
-            checkShieldDisable();
-            List<Integer> effects = ServerConfig.depletionEffectList();
-            List<Integer> effectStrengths = ServerConfig.depletionEffectStrengthList();
-
-            for (int i=0; i < effects.size(); i++) {
-                int effectStrength;
-                if (i >= effectStrengths.size()) {
-                    effectStrength = 0;
-                }
-                else {
-                    effectStrength = effectStrengths.get(i) - 1;
-                }
-
-                if (MobEffect.byId(effects.get(i)) != null) {
-                    this.player.addEffect(new MobEffectInstance(MobEffect.byId(effects.get(i)), 0, effectStrength));
-                }
-                else {
-                    if (this.player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.displayClientMessage(Component.literal("Effect with ID " + effects.get(i) + " does not exist."), true);
-                    }
-                }
-
-            }
-        }
     }
 }

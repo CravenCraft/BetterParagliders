@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
-import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
 import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -132,7 +132,7 @@ public final class BetterParaglidersEventHandler {
             PlayerMovement playerMovement = PlayerMovementProvider.of(serverPlayer);
 
             if (!playerMovement.stamina().isDepleted()) {
-                ((PlayerMovementInterface) playerMovement).calculateBlockStaminaCostServerSide(amount);
+                ((StaminaOverride) playerMovement.stamina()).calculateBlockStaminaCostServerSide(amount);
             }
         }
     }

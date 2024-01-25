@@ -1,6 +1,5 @@
 package net.cravencraft.betterparagliders.network;
 import net.cravencraft.betterparagliders.BetterParaglidersMod;
-import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -41,7 +40,6 @@ public class ModNet {
         context.get().setPacketHandled(true);
         context.get().enqueueWork(() -> {
             ServerPlayer player = context.get().getSender();
-//            PlayerMovement serverPlayerMovement = PlayerMovement.of(player);
             BotWStamina botWStamina = (BotWStamina) PlayerMovementProvider.of(player).stamina();
             if(player==null){
                 ParagliderMod.LOGGER.error("Cannot handle SyncMovementMsg: Wrong side");
@@ -60,10 +58,9 @@ public class ModNet {
             ctx.get().setPacketHandled(true);
             LocalPlayer localPlayer = Minecraft.getInstance().player;
             if (localPlayer == null) return;
-//            ClientPlayerMovement clientPlayerMovement = (ClientPlayerMovement) PlayerMovement.of(localPlayer);
             BotWStamina botWStamina = (BotWStamina) PlayerMovementProvider.of(localPlayer).stamina();
             if (localPlayer != null) {
-                ((StaminaOverride) botWStamina).setTotalActionStaminaCostClientSide(msg.totalActionStaminaCost());
+                ((StaminaOverride) botWStamina).setTotalActionStaminaCost(msg.totalActionStaminaCost());
             }
             else {
                 ParagliderMod.LOGGER.error("Couldn't handle packet {}, capability not found", msg);

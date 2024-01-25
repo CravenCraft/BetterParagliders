@@ -1,10 +1,7 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.stamina;
 
-import net.bettercombat.logic.PlayerAttackProperties;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
-import net.cravencraft.betterparagliders.network.ModNet;
-import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,9 +14,7 @@ import tictim.paraglider.api.Serde;
 import tictim.paraglider.api.movement.Movement;
 import tictim.paraglider.api.movement.PlayerState;
 import tictim.paraglider.api.stamina.Stamina;
-import tictim.paraglider.impl.movement.ClientPlayerMovement;
 import tictim.paraglider.impl.movement.PlayerMovement;
-import tictim.paraglider.impl.movement.ServerPlayerMovement;
 import tictim.paraglider.impl.stamina.BotWStamina;
 
 import static tictim.paraglider.api.movement.ParagliderPlayerStates.*;
@@ -32,8 +27,6 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
     @Shadow public abstract int giveStamina(int amount, boolean simulate);
 
     private int totalActionStaminaCost;
-    private int eldenStaminaDelay;
-    private int comboCount;
 
     @Override
     public int getTotalActionStaminaCost() {
@@ -42,11 +35,6 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
 
     @Override
     public void setTotalActionStaminaCost(int totalActionStaminaCost) {
-        this.totalActionStaminaCost = totalActionStaminaCost;
-    }
-
-    @Override
-    public void setTotalActionStaminaCostClientSide(int totalActionStaminaCost) {
         this.totalActionStaminaCost = totalActionStaminaCost;
     }
 
@@ -107,15 +95,6 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
             this.totalActionStaminaCost++;
         }
 
-        if (movement instanceof ServerPlayerMovement) {
-            this.setTotalActionStaminaCostServerSide(this.totalActionStaminaCost);
-        }
-        else if (movement instanceof ClientPlayerMovement clientPlayerMovement) {
-            //TODO: Maybe client code here vs. in the ClientPlayerMovementMixin?
-            //      Since it's only a single method.
-            calculateMeleeStaminaCost(player);
-        }
-
         //noinspection DataFlowIssue
         newRecoveryDelay = Math.max(0, Math.max(newRecoveryDelay, state.recoveryDelay()));
         if (recoveryDelay!=newRecoveryDelay) {
@@ -123,20 +102,5 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
         }
 
         ci.cancel();
-    }
-
-    /**
-     * Calculates the total amount of stamina to drain if the player is performing a melee attack. First checks if the
-     * player is holding a Better Combat compatible weapon, then checks the current combo state of the weapon to see
-     * if the stamina needs to be updated.
-     */
-    private void calculateMeleeStaminaCost(Player player) {
-        int currentCombo = ((PlayerAttackProperties) player).getComboCount();
-        this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
-
-        if (currentCombo > 0 && currentCombo != this.comboCount) {
-            this.comboCount = currentCombo;
-            ModNet.NET.sendToServer(new SyncActionToServerMsg(this.comboCount));
-        }
     }
 }

@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tictim.paraglider.contents.Contents;
 
 @Mod(BetterParaglidersMod.MOD_ID)
 @Mod.EventBusSubscriber(modid = BetterParaglidersMod.MOD_ID, bus = Bus.MOD)
@@ -24,7 +23,6 @@ public class BetterParaglidersMod
     public BetterParaglidersMod()
     {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-//        Contents.registerEventHandlers(eventBus); // TODO: Not needed?
         BetterParaglidersAttributes.registerEventHandlers(eventBus);
         ModNet.init();
 

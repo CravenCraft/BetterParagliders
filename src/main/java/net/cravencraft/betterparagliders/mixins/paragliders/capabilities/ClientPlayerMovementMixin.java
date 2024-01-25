@@ -1,7 +1,7 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
 import net.bettercombat.logic.PlayerAttackProperties;
-import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
 import net.minecraft.world.entity.player.Player;
@@ -14,10 +14,8 @@ import tictim.paraglider.impl.movement.ClientPlayerMovement;
 import tictim.paraglider.impl.movement.PlayerMovement;
 
 @Mixin(ClientPlayerMovement.class)
-public abstract class ClientPlayerMovementMixin extends PlayerMovement implements PlayerMovementInterface {
+public abstract class ClientPlayerMovementMixin extends PlayerMovement {
     @Shadow public abstract Player player();
-
-    private int totalActionStaminaCost;
     private int comboCount;
 
     public ClientPlayerMovementMixin(Player player) {
@@ -26,13 +24,7 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
 
     @Inject(method = "update", at = @At(value = "HEAD"), remap=false)
     public void update(CallbackInfo ci) {
-//        calculateMeleeStaminaCost();
-//        this.setTotalActionStaminaCost(this.totalActionStaminaCost);
-    }
-
-    @Override
-    public void setTotalActionStaminaCostClientSide(int totalActionStaminaCost) {
-        this.totalActionStaminaCost = totalActionStaminaCost;
+        calculateMeleeStaminaCost();
     }
 
     /**
@@ -45,6 +37,7 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
         this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
 
         if (currentCombo > 0 && currentCombo != this.comboCount) {
+            BetterParaglidersMod.LOGGER.info("CLIENT COMBO: " + this.comboCount);
             this.comboCount = currentCombo;
             ModNet.NET.sendToServer(new SyncActionToServerMsg(this.comboCount));
         }
