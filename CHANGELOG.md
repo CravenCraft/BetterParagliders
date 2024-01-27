@@ -1,3 +1,7 @@
+## V0.5.1 - Bug Fixes
+- Fixed bug causing the game to crash if a datapack isn't configured properly.
+- Fixed bug causing shields to be useable when stamina is drained.
+
 ## V0.5.0 - The Datapack Update!
 - Datapacks should now be fully supported & use my own standalone system removing the need for mixins.
 - Support for bows via datapacks.
