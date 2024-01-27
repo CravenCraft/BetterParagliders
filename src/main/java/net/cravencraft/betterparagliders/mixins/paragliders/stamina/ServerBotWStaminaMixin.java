@@ -49,6 +49,10 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
                     CalculateStaminaUtils.DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(player.getUseItem().getItem().getDescriptionId().replace("item.", ""))) {
                 calculateRangedStaminaCost();
             }
+
+            if (this.isDepleted()) {
+                checkShieldDisable();
+            }
         }
     }
 

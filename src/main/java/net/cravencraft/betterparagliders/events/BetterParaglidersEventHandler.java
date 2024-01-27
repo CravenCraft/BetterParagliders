@@ -52,17 +52,22 @@ public final class BetterParaglidersEventHandler {
             ResourceLocation identifier = entry.getKey();
             for (Resource resource : entry.getValue()) {
                 JsonReader staminaReader = new JsonReader(new InputStreamReader(resource.open()));
-                JsonObject weaponAttributes = JsonParser.parseReader(staminaReader).getAsJsonObject();
+                try {
+                    JsonObject weaponAttributes = JsonParser.parseReader(staminaReader).getAsJsonObject();
 
-                if (weaponAttributes.has("stamina_cost")) {
-                    String type = (weaponAttributes.has("type")) ? weaponAttributes.get("type").getAsString() : "placeholder";
-                    double staminaCost = weaponAttributes.get("stamina_cost").getAsDouble();
-                    String itemId = identifier.toString()
-                            .replace("stamina_cost/", "")
-                            .replace(":", ".")
-                            .replace(".json", "");
+                    if (weaponAttributes.has("stamina_cost")) {
+                        String type = (weaponAttributes.has("type")) ? weaponAttributes.get("type").getAsString() : "placeholder";
+                        double staminaCost = weaponAttributes.get("stamina_cost").getAsDouble();
+                        String itemId = identifier.toString()
+                                .replace("stamina_cost/", "")
+                                .replace(":", ".")
+                                .replace(".json", "");
 
-                    CalculateStaminaUtils.addDatapackStaminaOverride(type, itemId, staminaCost);
+                        CalculateStaminaUtils.addDatapackStaminaOverride(type, itemId, staminaCost);
+                    }
+                }
+                catch (IllegalStateException e) {
+                    BetterParaglidersMod.LOGGER.error("ERROR: " + entry.getKey() + ". The JSON object isn't properly configured");
                 }
 
                 staminaReader.close();
