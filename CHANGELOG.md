@@ -1,3 +1,8 @@
+## V0.5.2 - Attribute Fixes & Better Combat Version Bump
+- Added support for 1.8.4 version of Better Combat
+- Added a lang file for Attribute name support
+- Fixed a bug that didn't register attribute value changes
+
 ## V0.5.1 - Bug Fixes
 - Fixed bug causing the game to crash if a datapack isn't configured properly.
 - Fixed bug causing shields to be useable when stamina is drained.
