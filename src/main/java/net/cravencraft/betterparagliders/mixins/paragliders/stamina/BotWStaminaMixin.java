@@ -2,6 +2,7 @@ package net.cravencraft.betterparagliders.mixins.paragliders.stamina;
 
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,15 +40,15 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
     }
 
     @Inject(at = @At("HEAD"), remap = false, cancellable = true, method = "update")
-    private void injectEpicFightStaminaValues(@NotNull Movement movement, CallbackInfo ci) {
+    private void injectStaminaValues(@NotNull Movement movement, CallbackInfo ci) {
         PlayerMovement playerMovement = (PlayerMovement) movement;
         Player player = playerMovement.player();
-
         PlayerState state = movement.state();
         int recoveryDelay = movement.recoveryDelay();
         int newRecoveryDelay = recoveryDelay;
         int staminaDelta;
-        PlayerState playerState = movement.state();
+        ResourceLocation playerState = movement.state().id();
+
         if (IDLE.equals(playerState)) {
             staminaDelta = (int) (movement.state().staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
         } else if (RUNNING.equals(playerState)) {

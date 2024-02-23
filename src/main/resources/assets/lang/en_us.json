@@ -1,0 +1,12 @@
+{
+  "attribute.betterparagliders.sprinting_stamina_reduction": "Sprint Stamina Reduction",
+  "attribute.betterparagliders.swimming_stamina_reduction": "Swim Stamina Reduction",
+  "attribute.betterparagliders.idle_stamina_regen": "Idle Stamina Regeneration",
+  "attribute.betterparagliders.submerged_stamina_regen": "Submerged Idle Stamina Regeneration",
+  "attribute.betterparagliders.water_breathing_stamina_regen": "Water Breathing Stamina Regeneration",
+  "attribute.betterparagliders.base_melee_stamina_reduction": "Base Melee Stamina Reduction",
+  "attribute.betterparagliders.two_handed_stamina_reduction": "Two Handed Stamina Reduction",
+  "attribute.betterparagliders.one_handed_stamina_reduction": "One Handed Stamina Reduction",
+  "attribute.betterparagliders.range_stamina_reduction": "Range Stamina Reduction",
+  "attribute.betterparagliders.block_stamina_reduction": "Block Stamina Reduction"
+}
