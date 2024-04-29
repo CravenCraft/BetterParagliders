@@ -1,3 +1,6 @@
+## V0.5.3 - Better Combat Version Update
+- Bumped the Better Combat version up to the latest 1.8.5 version.
+
 ## V0.5.2 - Attribute Fixes & Better Combat Version Bump
 - Added support for 1.8.4 version of Better Combat
 - Added a lang file for Attribute name support
