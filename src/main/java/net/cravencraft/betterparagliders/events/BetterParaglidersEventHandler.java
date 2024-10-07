@@ -136,7 +136,7 @@ public final class BetterParaglidersEventHandler {
         if (serverPlayer.getUseItem().getItem().getDescriptionId().contains("shield")) {
             PlayerMovement playerMovement = PlayerMovementProvider.of(serverPlayer);
 
-            if (!playerMovement.stamina().isDepleted()) {
+            if (playerMovement != null && !playerMovement.stamina().isDepleted()) {
                 ((StaminaOverride) playerMovement.stamina()).calculateBlockStaminaCostServerSide(amount);
             }
         }

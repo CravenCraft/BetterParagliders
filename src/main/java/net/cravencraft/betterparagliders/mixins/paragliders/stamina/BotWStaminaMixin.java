@@ -52,8 +52,8 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
         PlayerState state = movement.state();
         int recoveryDelay = movement.recoveryDelay();
         int newRecoveryDelay = recoveryDelay;
-        BetterParaglidersMod.LOGGER.info("PLAYER STATE: {}", state.id().getPath());
-        BetterParaglidersMod.LOGGER.info("CURRENT PLAYER STATE FOR MIXIN: {}", this.currentPlayerState);
+//        BetterParaglidersMod.LOGGER.info("PLAYER STATE: {}", state.id().getPath());
+//        BetterParaglidersMod.LOGGER.info("CURRENT PLAYER STATE FOR MIXIN: {}", this.currentPlayerState);
 
         if (state.staminaDelta() < 0 || this.totalActionStaminaCost != 0) {
 
@@ -62,9 +62,9 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
                 //      See if it pairs well with the attribute modifications too. Cling to cliff needs to be added as well.
                 int staminaDelta = CalculateStaminaUtils.getModifiedStateChange((PlayerMovement) movement);
 
-                BetterParaglidersMod.LOGGER.info("STAMINA DELTA: {}", staminaDelta);
+//                BetterParaglidersMod.LOGGER.info("STAMINA DELTA: {}", staminaDelta);
                 if (CalculateStaminaUtils.getAdditionalMovementStaminaCost(state.id().getPath())) {
-                    BetterParaglidersMod.LOGGER.info("IS AN ADDITIONAL MOVEMENT STAMINA STATE. TOTAL COST NOW: {} STAMINA DELTA NOW: {}", this.totalActionStaminaCost, staminaDelta);
+//                    BetterParaglidersMod.LOGGER.info("IS AN ADDITIONAL MOVEMENT STAMINA STATE. TOTAL COST NOW: {} STAMINA DELTA NOW: {}", this.totalActionStaminaCost, staminaDelta);
 
                     if (!this.currentPlayerState.equals(state.id().getPath())) {
                         this.totalActionStaminaCost -= staminaDelta;

@@ -1,5 +1,8 @@
 ## V0.6.0 - Major Bug Fixes
-- 
+- Removed support for additional effects when the player runs out of stamina which was causing bugs where
+  the player couldn't receive those effects when they had stamina. 
+- The player can no longer attack when out of stamina.
+- Added support for ParCool actions (For a potential future update that better supports Paragliders).
 
 ## V0.5.3 - Better Combat Version Update
 - Bumped the Better Combat version up to the latest 1.8.5 version.

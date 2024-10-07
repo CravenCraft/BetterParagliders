@@ -101,6 +101,7 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
     }
 
     /**
+     * TODO: Might need to rework this.
      * Disables the shield cooldown UNLESS the player's current stamina is fully depleted. If the stamina is depleted,
      * then the cooldown is set to the amount of ticks remaining until the player's stamina is fully replenished. Has
      * some additional checks to ensure the shield cooldown time stays in sync with the stamina replenish time as well.

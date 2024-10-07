@@ -15,8 +15,6 @@ public class ServerConfig {
     private static ForgeConfigSpec.DoubleValue RANGE_STAMINA_CONSUMPTION;
     private static ForgeConfigSpec.DoubleValue BLOCK_STAMINA_CONSUMPTION;
     private static ForgeConfigSpec.DoubleValue PROJECTILE_STAMINA_CONSUMPTION;
-    private static ForgeConfigSpec.ConfigValue<List<? extends Integer>> DEPLETION_EFFECT_LIST;
-    private static ForgeConfigSpec.ConfigValue<List<? extends Integer>> DEPLETION_EFFECT_STRENGTH_LIST;
 
     public static double meleeStaminaConsumption() {
         return MELEE_STAMINA_CONSUMPTION.get();
@@ -26,8 +24,6 @@ public class ServerConfig {
     public static double rangeStaminaConsumption() { return RANGE_STAMINA_CONSUMPTION.get(); }
     public static double blockStaminaConsumption() { return BLOCK_STAMINA_CONSUMPTION.get(); }
     public static double projectileStaminaConsumption() { return PROJECTILE_STAMINA_CONSUMPTION.get(); }
-    public static List<Integer> depletionEffectList() { return (List<Integer>) DEPLETION_EFFECT_LIST.get(); }
-    public static List<Integer> depletionEffectStrengthList() { return (List<Integer>) DEPLETION_EFFECT_STRENGTH_LIST.get(); }
 
     public ServerConfig(ForgeConfigSpec.Builder server) {
         server.push("stamina");
@@ -43,14 +39,6 @@ public class ServerConfig {
                 .defineInRange("block_stamina_consumption", 10, 0.0, 100.0);
         PROJECTILE_STAMINA_CONSUMPTION = server.comment("The base amount of stamina blocking a projectile will cost (in addition to blocking cost).")
                 .defineInRange("projectile_stamina_consumption", 5, 0.0, 100.0);
-        DEPLETION_EFFECT_LIST = server
-                .comment("The effect ID that will be applied when a player runs out of stamina (default is Mining Fatigue and Weakness respectively).")
-                .comment("Refer to https://minecraft.fandom.com/wiki/Effect#Effect_list for a list of the effects and their corresponding IDs")
-                .defineListAllowEmpty(Collections.singletonList("effects"), () -> ImmutableList.of(4, 18), o -> true);
-        DEPLETION_EFFECT_STRENGTH_LIST = server
-                .comment("The strength applied to the depletion effect above (The default is 2 and 7. A value such as 4 would apply Weakness IV).")
-                .comment("If no value is set here, and an extra effect is added above, then the effect strength will default to 1.")
-                .defineListAllowEmpty(Collections.singletonList("effects_strength"), () -> ImmutableList.of(5, 1), o -> true);
         server.pop(); // Pop stamina
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, server.build());
