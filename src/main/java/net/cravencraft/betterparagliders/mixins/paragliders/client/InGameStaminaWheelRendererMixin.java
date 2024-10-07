@@ -1,6 +1,8 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.client;
 
+import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
+import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +17,7 @@ import tictim.paraglider.client.render.InGameStaminaWheelRenderer;
 import tictim.paraglider.client.render.StaminaWheelConstants;
 import tictim.paraglider.client.render.StaminaWheelRenderer;
 import tictim.paraglider.forge.capability.PlayerMovementProvider;
+import tictim.paraglider.impl.movement.PlayerMovement;
 import tictim.paraglider.impl.stamina.BotWStamina;
 
 @Mixin(InGameStaminaWheelRenderer.class)
@@ -36,7 +39,12 @@ public abstract class InGameStaminaWheelRendererMixin extends StaminaWheelRender
                 boolean depleted = s.isDepleted();
                 Movement movement = Movement.get(player);
                 int totalActionStaminaCost = ((StaminaOverride) botWStamina).getTotalActionStaminaCost();
-                int staminaDelta = movement.getActualStaminaDelta();
+                int staminaDelta = CalculateStaminaUtils.getModifiedStateChange((PlayerMovement) movement);
+
+                if (CalculateStaminaUtils.getAdditionalMovementStaminaCost(movement.state().id().getPath())) {
+                    staminaDelta = 0;
+                }
+
                 staminaDelta = (staminaDelta < 0) ? staminaDelta - totalActionStaminaCost : -totalActionStaminaCost;
                 wheel.fill(0, maxStamina, StaminaWheelConstants.EMPTY);
                 if (depleted) {

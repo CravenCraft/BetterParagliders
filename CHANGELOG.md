@@ -1,3 +1,6 @@
+## V0.6.0 - Major Bug Fixes
+- 
+
 ## V0.5.3 - Better Combat Version Update
 - Bumped the Better Combat version up to the latest 1.8.5 version.
 

@@ -1,18 +1,23 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.stamina;
 
+import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
+import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tictim.paraglider.api.Copy;
+import tictim.paraglider.api.ParagliderAPI;
 import tictim.paraglider.api.Serde;
 import tictim.paraglider.api.movement.Movement;
+import tictim.paraglider.api.movement.ParagliderPlayerStates;
 import tictim.paraglider.api.movement.PlayerState;
 import tictim.paraglider.api.stamina.Stamina;
 import tictim.paraglider.impl.movement.PlayerMovement;
@@ -27,7 +32,10 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
 
     @Shadow public abstract int giveStamina(int amount, boolean simulate);
 
+    @Unique
     private int totalActionStaminaCost;
+    @Unique
+    private String currentPlayerState = "";
 
     @Override
     public int getTotalActionStaminaCost() {
@@ -41,31 +49,29 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
 
     @Inject(at = @At("HEAD"), remap = false, cancellable = true, method = "update")
     private void injectStaminaValues(@NotNull Movement movement, CallbackInfo ci) {
-        PlayerMovement playerMovement = (PlayerMovement) movement;
-        Player player = playerMovement.player();
         PlayerState state = movement.state();
         int recoveryDelay = movement.recoveryDelay();
         int newRecoveryDelay = recoveryDelay;
-        int staminaDelta;
-        ResourceLocation playerState = movement.state().id();
-
-        if (IDLE.equals(playerState)) {
-            staminaDelta = (int) (movement.state().staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
-        } else if (RUNNING.equals(playerState)) {
-            staminaDelta = (int) (movement.state().staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
-        } else if (SWIMMING.equals(playerState)) {
-            staminaDelta = (int) (movement.state().staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
-        } else if (UNDERWATER.equals(playerState)) {
-            staminaDelta = (int) (movement.state().staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
-        } else if (BREATHING_UNDERWATER.equals(playerState)) {
-            staminaDelta = (int) (movement.state().staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
-        } else {
-            staminaDelta = movement.state().staminaDelta();
-        }
+        BetterParaglidersMod.LOGGER.info("PLAYER STATE: {}", state.id().getPath());
+        BetterParaglidersMod.LOGGER.info("CURRENT PLAYER STATE FOR MIXIN: {}", this.currentPlayerState);
 
         if (state.staminaDelta() < 0 || this.totalActionStaminaCost != 0) {
 
             if (!isDepleted()) {
+                //TODO: The total stamina cost is stacking for the parcool states. Just make the states cost a small amount.
+                //      See if it pairs well with the attribute modifications too. Cling to cliff needs to be added as well.
+                int staminaDelta = CalculateStaminaUtils.getModifiedStateChange((PlayerMovement) movement);
+
+                BetterParaglidersMod.LOGGER.info("STAMINA DELTA: {}", staminaDelta);
+                if (CalculateStaminaUtils.getAdditionalMovementStaminaCost(state.id().getPath())) {
+                    BetterParaglidersMod.LOGGER.info("IS AN ADDITIONAL MOVEMENT STAMINA STATE. TOTAL COST NOW: {} STAMINA DELTA NOW: {}", this.totalActionStaminaCost, staminaDelta);
+
+                    if (!this.currentPlayerState.equals(state.id().getPath())) {
+                        this.totalActionStaminaCost -= staminaDelta;
+                    }
+                    staminaDelta = 0;
+                }
+
                 //TODO: This probably needs to be redone with the triangular numbers formula
                 staminaDelta = (staminaDelta < 0) ? staminaDelta - this.totalActionStaminaCost : -this.totalActionStaminaCost;
                 if (staminaDelta > 0) {
@@ -86,6 +92,10 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
             }
         }
 
+        if (!this.currentPlayerState.equals(state.id().getPath())) {
+            this.currentPlayerState = state.id().getPath();
+        }
+
         // Check for draining stamina
         if (this.totalActionStaminaCost > 0) {
             movement.setRecoveryDelay(10);
@@ -97,8 +107,8 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
         }
 
         //noinspection DataFlowIssue
-        newRecoveryDelay = Math.max(0, Math.max(newRecoveryDelay, state.recoveryDelay()));
-        if (recoveryDelay!=newRecoveryDelay) {
+        newRecoveryDelay = Math.max(newRecoveryDelay, state.recoveryDelay());
+        if (recoveryDelay != newRecoveryDelay) {
             movement.setRecoveryDelay(newRecoveryDelay);
         }
 

@@ -8,17 +8,21 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import tictim.paraglider.api.movement.PlayerState;
+import tictim.paraglider.impl.movement.PlayerMovement;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static tictim.paraglider.api.movement.ParagliderPlayerStates.*;
 
 public class CalculateStaminaUtils {
 
-    public static Map<String, Double> DATAPACK_MELEE_STAMINA_OVERRIDES = new HashMap();
-    public static Map<String, Double> DATAPACK_RANGED_STAMINA_OVERRIDES = new HashMap();
-    public static Map<String, Double> DATAPACK_SHIELD_STAMINA_OVERRIDES = new HashMap();
+    public static Map<String, Double> DATAPACK_MELEE_STAMINA_OVERRIDES = new HashMap<>();
+    public static Map<String, Double> DATAPACK_RANGED_STAMINA_OVERRIDES = new HashMap<>();
+    public static Map<String, Double> DATAPACK_SHIELD_STAMINA_OVERRIDES = new HashMap<>();
+
+    public static final List<String> ADDITIONAL_STAMINA_COST_MOVEMENT_STATES = List.of("dodge", "breakfall", "roll", "vault", "climb_up", "cling_to_cliff");
 
     private static final int baseRangeStaminaCost = 10;
 
@@ -139,20 +143,42 @@ public class CalculateStaminaUtils {
      * Modifies the stamina drain for the current states below based on the attribute values
      * for the given player.
      *
-     * @return
+     * @return The amount of stamina that should be drained for the given state based on the player's current attributes.
      */
-    public static int getModifiedStateChange(Player player, PlayerState playerState) {
-        if (IDLE.equals(playerState)) {
-            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
-        } else if (RUNNING.equals(playerState)) {
-            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
-        } else if (SWIMMING.equals(playerState)) {
-            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
-        } else if (UNDERWATER.equals(playerState)) {
-            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
-        } else if (BREATHING_UNDERWATER.equals(playerState)) {
-            return (int) (playerState.staminaDelta() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
-        }
-        return playerState.staminaDelta();
+    public static int getModifiedStateChange(PlayerMovement playerMovement) {
+        int staminaDelta = playerMovement.state().staminaDelta();
+        Player player = playerMovement.player();
+        String playerState = playerMovement.state().id().getPath();
+
+        staminaDelta = (int) switch(playerState) {
+            case "idle" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get());
+            case "running" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get());
+            case "swimming" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get());
+            case "underwater" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get());
+            case "breathing_underwater" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get());
+            case "fast_running" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.FAST_RUNNING_STAMINA_REDUCTION.get());
+            case "fast_swimming" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.FAST_SWIMMING_STAMINA_REDUCTION.get());
+            case "horizontal_wall_run" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.HORIZONTAL_WALL_RUN_STAMINA_REDUCTION.get());
+            case "cling_to_cliff" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CLING_TO_CLIFF_STAMINA_REDUCTION.get());
+            case "dodge" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.DODGE_STAMINA_REDUCTION.get());
+            case "roll" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.ROLL_STAMINA_REDUCTION.get());
+            case "climb_up" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CLIMB_UP_STAMINA_REDUCTION.get());
+            case "breakfall" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.BREAKFALL_STAMINA_REDUCTION.get());
+            case "vault" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.VAULT_STAMINA_REDUCTION.get());
+            default -> staminaDelta;
+        };
+
+        // Ensure that attributes can never make a player state that isn't supposed to give stamina give it.
+        return (staminaDelta > 0 && playerMovement.state().staminaDelta() < 0) ? 0 : staminaDelta;
+    }
+
+    /**
+     * Method mainly made to better support the ParCool mod and its various mobility actions.
+     *
+     * @param playerState The state that will be searched for in the list of additional movement states
+     * @return whether the state is contained in the list
+     */
+    public static boolean getAdditionalMovementStaminaCost(String playerState) {
+        return ADDITIONAL_STAMINA_COST_MOVEMENT_STATES.contains(playerState);
     }
 }
