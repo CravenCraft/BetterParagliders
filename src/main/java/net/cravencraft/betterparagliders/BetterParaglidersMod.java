@@ -50,6 +50,9 @@ public class BetterParaglidersMod
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.BREAKFALL_STAMINA_REDUCTION.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.VAULT_STAMINA_REDUCTION.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.CLIMB_UP_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.VERTICAL_WALL_RUN_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.CAT_LEAP_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.CHARGE_JUMP_STAMINA_REDUCTION.get());
 
 
         // Combat Attributes

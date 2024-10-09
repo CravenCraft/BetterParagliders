@@ -8,14 +8,11 @@ import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import tictim.paraglider.api.movement.PlayerState;
 import tictim.paraglider.impl.movement.PlayerMovement;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static tictim.paraglider.api.movement.ParagliderPlayerStates.*;
 
 public class CalculateStaminaUtils {
 
@@ -23,7 +20,7 @@ public class CalculateStaminaUtils {
     public static Map<String, Double> DATAPACK_RANGED_STAMINA_OVERRIDES = new HashMap<>();
     public static Map<String, Double> DATAPACK_SHIELD_STAMINA_OVERRIDES = new HashMap<>();
 
-    public static final List<String> ADDITIONAL_STAMINA_COST_MOVEMENT_STATES = List.of("dodge", "breakfall", "roll", "vault", "climb_up", "cling_to_cliff");
+    public static final List<String> ADDITIONAL_STAMINA_COST_MOVEMENT_STATES = List.of("dodge", "breakfall", "roll", "vault", "climb_up", "cling_to_cliff", "vertical_wall_run", "cat_leap", "charge_jump");
 
     private static final int baseRangeStaminaCost = 10;
 
@@ -154,6 +151,9 @@ public class CalculateStaminaUtils {
             case "climb_up" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CLIMB_UP_STAMINA_REDUCTION.get());
             case "breakfall" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.BREAKFALL_STAMINA_REDUCTION.get());
             case "vault" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.VAULT_STAMINA_REDUCTION.get());
+            case "vertical_wall_run" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.VERTICAL_WALL_RUN_STAMINA_REDUCTION.get());
+            case "cat_leap" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CAT_LEAP_STAMINA_REDUCTION.get());
+            case "charge_jump" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CHARGE_JUMP_STAMINA_REDUCTION.get());
             default -> staminaDelta;
         };
 

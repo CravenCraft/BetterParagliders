@@ -36,8 +36,9 @@ public class BetterParaglidersAttributes {
     public static final RegistryObject<Attribute> BREAKFALL_STAMINA_REDUCTION = ATTRIBUTES.register("breakfall_stamina_reduction", () -> new RangedAttribute("breakfall_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
     public static final RegistryObject<Attribute> VAULT_STAMINA_REDUCTION = ATTRIBUTES.register("vault_stamina_reduction", () -> new RangedAttribute("vault_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
     public static final RegistryObject<Attribute> CLIMB_UP_STAMINA_REDUCTION = ATTRIBUTES.register("climb_up_stamina_reduction", () -> new RangedAttribute("climb_up_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
-
-
+    public static final RegistryObject<Attribute> VERTICAL_WALL_RUN_STAMINA_REDUCTION = ATTRIBUTES.register("vertical_wall_run_stamina_reduction", () -> new RangedAttribute("vertical_wall_run_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> CAT_LEAP_STAMINA_REDUCTION = ATTRIBUTES.register("cat_leap_stamina_reduction", () -> new RangedAttribute("cat_leap_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
+    public static final RegistryObject<Attribute> CHARGE_JUMP_STAMINA_REDUCTION = ATTRIBUTES.register("charge_jump_stamina_reduction", () -> new RangedAttribute("charge_jump_stamina_reduction", 0.0, 0.0, 100.0).setSyncable(true));
 
     /**
      * Combat Attributes
