@@ -3,6 +3,12 @@
   the player couldn't receive those effects when they had stamina. 
 - The player can no longer attack when out of stamina.
 - Added support for ParCool actions (For a potential future update that better supports Paragliders).
+- Fixed potential bug causing a crash whenever the player tries to draw a bow with depleted stamina.
+- Reworked datapack system. Now each mod will only contain a single json file that uses a json array.
+- Added multiple checks to ensure the game has as little random crashes as possible.
+- Player can no longer perform a vanilla attack when out of stamina.
+- Reworked how depleted stamina works for bows and crossbows. Works more consistently now.
+- Massive rework to how depleted stamina effects blocking. No more cooldown effects. Shield simply won't be able to lift now.
 
 ## V0.5.3 - Better Combat Version Update
 - Bumped the Better Combat version up to the latest 1.8.5 version.

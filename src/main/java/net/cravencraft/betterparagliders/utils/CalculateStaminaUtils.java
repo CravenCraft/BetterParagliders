@@ -2,6 +2,7 @@ package net.cravencraft.betterparagliders.utils;
 
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
+import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -27,23 +28,15 @@ public class CalculateStaminaUtils {
     private static final int baseRangeStaminaCost = 10;
 
     /**
-     * TODO: Write description
-     *
-     * @param itemStack
-     * @param staminaCost
+     * Populates a hashmap that will contain overrides for ranged weapons, melee weapons, and shields.
      */
     public static void addDatapackStaminaOverride(String type, String itemStack, double staminaCost) {
+        BetterParaglidersMod.LOGGER.info("ITEM ADDED TO DATAPACK INFO: {}", itemStack);
 
         switch (type) {
-            case "shield":
-                DATAPACK_SHIELD_STAMINA_OVERRIDES.put(itemStack, staminaCost);
-                break;
-            case "ranged_weapon":
-                DATAPACK_RANGED_STAMINA_OVERRIDES.put(itemStack, staminaCost);
-                break;
-            case "melee_weapon":
-            default:
-                DATAPACK_MELEE_STAMINA_OVERRIDES.put(itemStack, staminaCost);
+            case "shield" -> DATAPACK_SHIELD_STAMINA_OVERRIDES.put(itemStack, staminaCost);
+            case "ranged_weapon" -> DATAPACK_RANGED_STAMINA_OVERRIDES.put(itemStack, staminaCost);
+            case "melee_weapon" -> DATAPACK_MELEE_STAMINA_OVERRIDES.put(itemStack, staminaCost);
         }
     }
 
@@ -120,10 +113,6 @@ public class CalculateStaminaUtils {
     /**
      * Will drain stamina based on the amount either the default configured amount for the shield being used,
      * or based on a datapack value overriding that amount.
-     *
-     * @param player
-     * @param blockedDamage
-     * @return
      */
     public static int calculateBlockStaminaCost(Player player, float blockedDamage) {
         int totalStaminaConsumption = (int) blockedDamage;

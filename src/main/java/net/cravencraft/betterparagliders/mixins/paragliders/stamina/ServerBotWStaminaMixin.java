@@ -50,9 +50,9 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
                 calculateRangedStaminaCost();
             }
 
-            if (this.isDepleted()) {
-                checkShieldDisable();
-            }
+//            if (this.isDepleted()) {
+//                checkShieldDisable();
+//            }
         }
     }
 
@@ -90,15 +90,15 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
      * Checks if the player is currently holding a shield item. If so, then the modifyShieldCooldown method is called
      * to determine what to do with the shield.
      */
-    private void checkShieldDisable() {
-
-        if (this.player.getOffhandItem().getItem().getDescriptionId().contains("shield")) {
-            modifyShieldCooldown(this.player.getOffhandItem().getItem());
-        }
-        else if (this.player.getMainHandItem().getItem().getDescriptionId().contains("shield")) {
-            modifyShieldCooldown(this.player.getMainHandItem().getItem());
-        }
-    }
+//    private void checkShieldDisable() {
+//
+//        if (this.player.getOffhandItem().getItem().getDescriptionId().contains("shield")) {
+//            modifyShieldCooldown(this.player.getOffhandItem().getItem());
+//        }
+//        else if (this.player.getMainHandItem().getItem().getDescriptionId().contains("shield")) {
+//            modifyShieldCooldown(this.player.getMainHandItem().getItem());
+//        }
+//    }
 
     /**
      * TODO: Might need to rework this.
@@ -108,17 +108,17 @@ public abstract class ServerBotWStaminaMixin extends BotWStamina implements Stam
      *
      * @param shieldItem A main hand or offhand shield being held by the player
      */
-    private void modifyShieldCooldown( Item shieldItem) {
-        if (this.player.getOffhandItem().getItem().getDescriptionId().contains("shield")) {
-            int recoveryRate = ParagliderPlayerStates.RECOVERY_DELAY;
-            int currentRecoveredAmount = this.serverPlayerMovement.stamina().stamina();
-            float cooldownPercentage = player.getCooldowns().getCooldownPercent(shieldItem, 0.0F);
-            int shieldRecoveryDelay = (int) (this.serverPlayerMovement.stamina().maxStamina() * (1 - cooldownPercentage));
-
-            if (shieldRecoveryDelay > currentRecoveredAmount) {
-                player.getCooldowns().addCooldown(shieldItem, (this.serverPlayerMovement.stamina().maxStamina() - currentRecoveredAmount) / recoveryRate);
-            }
-        }
-
-    }
+//    private void modifyShieldCooldown( Item shieldItem) {
+//        if (this.player.getOffhandItem().getItem().getDescriptionId().contains("shield")) {
+//            int recoveryRate = ParagliderPlayerStates.RECOVERY_DELAY;
+//            int currentRecoveredAmount = this.serverPlayerMovement.stamina().stamina();
+//            float cooldownPercentage = player.getCooldowns().getCooldownPercent(shieldItem, 0.0F);
+//            int shieldRecoveryDelay = (int) (this.serverPlayerMovement.stamina().maxStamina() * (1 - cooldownPercentage));
+//
+//            if (shieldRecoveryDelay > currentRecoveredAmount) {
+//                player.getCooldowns().addCooldown(shieldItem, (this.serverPlayerMovement.stamina().maxStamina() - currentRecoveredAmount) / recoveryRate);
+//            }
+//        }
+//
+//    }
 }
