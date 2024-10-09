@@ -1,6 +1,5 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.client;
 
-import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
 import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.world.entity.player.Player;

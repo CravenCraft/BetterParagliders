@@ -1,11 +1,7 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.stamina;
 
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
-import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.StaminaOverride;
 import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,16 +10,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tictim.paraglider.api.Copy;
-import tictim.paraglider.api.ParagliderAPI;
 import tictim.paraglider.api.Serde;
 import tictim.paraglider.api.movement.Movement;
-import tictim.paraglider.api.movement.ParagliderPlayerStates;
 import tictim.paraglider.api.movement.PlayerState;
 import tictim.paraglider.api.stamina.Stamina;
 import tictim.paraglider.impl.movement.PlayerMovement;
 import tictim.paraglider.impl.stamina.BotWStamina;
-
-import static tictim.paraglider.api.movement.ParagliderPlayerStates.*;
 
 @Mixin(BotWStamina.class)
 public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaOverride {
@@ -52,19 +44,12 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
         PlayerState state = movement.state();
         int recoveryDelay = movement.recoveryDelay();
         int newRecoveryDelay = recoveryDelay;
-//        BetterParaglidersMod.LOGGER.info("PLAYER STATE: {}", state.id().getPath());
-//        BetterParaglidersMod.LOGGER.info("CURRENT PLAYER STATE FOR MIXIN: {}", this.currentPlayerState);
+        int staminaDelta = CalculateStaminaUtils.getModifiedStateChange((PlayerMovement) movement);
 
         if (state.staminaDelta() < 0 || this.totalActionStaminaCost != 0) {
 
             if (!isDepleted()) {
-                //TODO: The total stamina cost is stacking for the parcool states. Just make the states cost a small amount.
-                //      See if it pairs well with the attribute modifications too. Cling to cliff needs to be added as well.
-                int staminaDelta = CalculateStaminaUtils.getModifiedStateChange((PlayerMovement) movement);
-
-//                BetterParaglidersMod.LOGGER.info("STAMINA DELTA: {}", staminaDelta);
                 if (CalculateStaminaUtils.getAdditionalMovementStaminaCost(state.id().getPath())) {
-//                    BetterParaglidersMod.LOGGER.info("IS AN ADDITIONAL MOVEMENT STAMINA STATE. TOTAL COST NOW: {} STAMINA DELTA NOW: {}", this.totalActionStaminaCost, staminaDelta);
 
                     if (!this.currentPlayerState.equals(state.id().getPath())) {
                         this.totalActionStaminaCost -= staminaDelta;
@@ -87,8 +72,8 @@ public abstract class BotWStaminaMixin implements Stamina, Copy, Serde, StaminaO
             if (recoveryDelay > 0) {
                 newRecoveryDelay--;
             }
-            else if (state.staminaDelta() > 0) {
-                giveStamina(state.staminaDelta(), false);
+            else if (staminaDelta > 0) {
+                giveStamina(staminaDelta, false);
             }
         }
 

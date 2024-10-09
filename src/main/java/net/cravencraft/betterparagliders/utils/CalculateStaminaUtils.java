@@ -132,33 +132,38 @@ public class CalculateStaminaUtils {
      * @return The amount of stamina that should be drained for the given state based on the player's current attributes.
      */
     public static int getModifiedStateChange(PlayerMovement playerMovement) {
-        int staminaDelta = playerMovement.state().staminaDelta();
+        int originalStaminaDelta = playerMovement.state().staminaDelta();
         Player player = playerMovement.player();
         String playerState = playerMovement.state().id().getPath();
 
-        staminaDelta = (int) switch(playerState) {
-            case "idle" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get());
-            case "running" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get());
-            case "swimming" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get());
-            case "underwater" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get());
-            case "breathing_underwater" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get());
-            case "fast_running" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.FAST_RUNNING_STAMINA_REDUCTION.get());
-            case "fast_swimming" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.FAST_SWIMMING_STAMINA_REDUCTION.get());
-            case "horizontal_wall_run" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.HORIZONTAL_WALL_RUN_STAMINA_REDUCTION.get());
-            case "cling_to_cliff" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CLING_TO_CLIFF_STAMINA_REDUCTION.get());
-            case "dodge" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.DODGE_STAMINA_REDUCTION.get());
-            case "roll" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.ROLL_STAMINA_REDUCTION.get());
-            case "climb_up" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CLIMB_UP_STAMINA_REDUCTION.get());
-            case "breakfall" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.BREAKFALL_STAMINA_REDUCTION.get());
-            case "vault" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.VAULT_STAMINA_REDUCTION.get());
-            case "vertical_wall_run" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.VERTICAL_WALL_RUN_STAMINA_REDUCTION.get());
-            case "cat_leap" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CAT_LEAP_STAMINA_REDUCTION.get());
-            case "charge_jump" -> staminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CHARGE_JUMP_STAMINA_REDUCTION.get());
-            default -> staminaDelta;
+        int modifiedStaminaDelta = (int) switch(playerState) {
+            case "idle" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get());
+            case "running" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get());
+            case "swimming" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get());
+            case "underwater" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get());
+            case "breathing_underwater" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get());
+            case "fast_running" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.FAST_RUNNING_STAMINA_REDUCTION.get());
+            case "fast_swimming" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.FAST_SWIMMING_STAMINA_REDUCTION.get());
+            case "horizontal_wall_run" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.HORIZONTAL_WALL_RUN_STAMINA_REDUCTION.get());
+            case "cling_to_cliff" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CLING_TO_CLIFF_STAMINA_REDUCTION.get());
+            case "dodge" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.DODGE_STAMINA_REDUCTION.get());
+            case "roll" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.ROLL_STAMINA_REDUCTION.get());
+            case "climb_up" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CLIMB_UP_STAMINA_REDUCTION.get());
+            case "breakfall" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.BREAKFALL_STAMINA_REDUCTION.get());
+            case "vault" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.VAULT_STAMINA_REDUCTION.get());
+            case "vertical_wall_run" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.VERTICAL_WALL_RUN_STAMINA_REDUCTION.get());
+            case "cat_leap" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CAT_LEAP_STAMINA_REDUCTION.get());
+            case "charge_jump" -> originalStaminaDelta + player.getAttributeValue(BetterParaglidersAttributes.CHARGE_JUMP_STAMINA_REDUCTION.get());
+            default -> originalStaminaDelta;
         };
 
         // Ensure that attributes can never make a player state that isn't supposed to give stamina give it.
-        return (staminaDelta > 0 && playerMovement.state().staminaDelta() < 0) ? 0 : staminaDelta;
+        if (originalStaminaDelta >= 0) {
+            return Math.max(modifiedStaminaDelta, originalStaminaDelta);
+        }
+        else {
+            return Math.min(0, modifiedStaminaDelta);
+        }
     }
 
     /**

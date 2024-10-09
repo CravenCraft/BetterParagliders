@@ -9,6 +9,7 @@
 - Player can no longer perform a vanilla attack when out of stamina.
 - Reworked how depleted stamina works for bows and crossbows. Works more consistently now.
 - Massive rework to how depleted stamina effects blocking. No more cooldown effects. Shield simply won't be able to lift now.
+- Fixed bug causing stamina regen attributes such as idle regen not applying. 
 
 ## V0.5.3 - Better Combat Version Update
 - Bumped the Better Combat version up to the latest 1.8.5 version.
