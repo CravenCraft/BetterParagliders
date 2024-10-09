@@ -1,4 +1,4 @@
-## V0.6.0 - Major Bug Fixes
+## V0.6.0 - Major Bug Fixes, Datapack Rework, Depletion Effects Rework, & ParCool Support
 - Removed support for additional effects when the player runs out of stamina which was causing bugs where
   the player couldn't receive those effects when they had stamina. 
 - The player can no longer attack when out of stamina.
@@ -9,7 +9,8 @@
 - Player can no longer perform a vanilla attack when out of stamina.
 - Reworked how depleted stamina works for bows and crossbows. Works more consistently now.
 - Massive rework to how depleted stamina effects blocking. No more cooldown effects. Shield simply won't be able to lift now.
-- Fixed bug causing stamina regen attributes such as idle regen not applying. 
+- Fixed bug causing stamina regen attributes such as idle regen not applying.
+- Fixed bug causing attribute names not work be properly linked to the lang file.
 
 ## V0.5.3 - Better Combat Version Update
 - Bumped the Better Combat version up to the latest 1.8.5 version.
