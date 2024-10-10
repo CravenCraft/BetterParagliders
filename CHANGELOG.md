@@ -11,6 +11,7 @@
 - Massive rework to how depleted stamina effects blocking. No more cooldown effects. Shield simply won't be able to lift now.
 - Fixed bug causing stamina regen attributes such as idle regen not applying.
 - Fixed bug causing attribute names not work be properly linked to the lang file.
+- Fixed minor visual bug causing replenished wheel to remain white for too long before disappearing.
 
 ## V0.5.3 - Better Combat Version Update
 - Bumped the Better Combat version up to the latest 1.8.5 version.

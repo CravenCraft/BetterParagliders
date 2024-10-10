@@ -2,7 +2,6 @@ package net.cravencraft.betterparagliders.utils;
 
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
-import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -28,7 +27,6 @@ public class CalculateStaminaUtils {
      * Populates a hashmap that will contain overrides for ranged weapons, melee weapons, and shields.
      */
     public static void addDatapackStaminaOverride(String type, String itemStack, double staminaCost) {
-        BetterParaglidersMod.LOGGER.info("ITEM ADDED TO DATAPACK INFO: {}", itemStack);
 
         switch (type) {
             case "shield" -> DATAPACK_SHIELD_STAMINA_OVERRIDES.put(itemStack, staminaCost);
@@ -132,7 +130,7 @@ public class CalculateStaminaUtils {
      * @return The amount of stamina that should be drained for the given state based on the player's current attributes.
      */
     public static int getModifiedStateChange(PlayerMovement playerMovement) {
-        int originalStaminaDelta = playerMovement.state().staminaDelta();
+        int originalStaminaDelta = playerMovement.getActualStaminaDelta();
         Player player = playerMovement.player();
         String playerState = playerMovement.state().id().getPath();
 
