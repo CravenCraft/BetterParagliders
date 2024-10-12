@@ -27,11 +27,13 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement {
 
     @Inject(method = "update", at = @At(value = "HEAD"), remap=false)
     public void update(CallbackInfo ci) {
-        calculateMeleeStaminaCost();
 
         // Cancels the Better Combat attack if the player is out of stamina.
         if (!this.player().isCreative() && !this.player().isSpectator() && this.stamina().isDepleted()) {
             ((MinecraftClient_BetterCombat) Minecraft.getInstance()).cancelUpswing();
+        }
+        else {
+            calculateMeleeStaminaCost();
         }
     }
 
