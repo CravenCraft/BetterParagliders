@@ -15,7 +15,6 @@ import tictim.paraglider.capabilities.PlayerMovement;
 import tictim.paraglider.capabilities.PlayerState;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CalculateStaminaUtils {
@@ -24,14 +23,10 @@ public class CalculateStaminaUtils {
     public static Map<String, Double> DATAPACK_RANGED_STAMINA_OVERRIDES = new HashMap<>();
     public static Map<String, Double> DATAPACK_SHIELD_STAMINA_OVERRIDES = new HashMap<>();
 
-    private static final int BASE_RANGE_STAMINA_COST = 10;
-    private static final int BASE_BLOCK_STAMINA_COST = 10;
-
     /**
      * Populates a hashmap that will contain overrides for ranged weapons, melee weapons, and shields.
      */
     public static void addDatapackStaminaOverride(String type, String itemStack, double staminaCost) {
-        BetterParaglidersMod.LOGGER.info("ADDING A " + type + " ITEM " + itemStack + " WITH A STAMINA COST OF " + staminaCost);
         switch (type) {
             case "shield" -> DATAPACK_SHIELD_STAMINA_OVERRIDES.put(itemStack, staminaCost);
             case "ranged_weapon" -> DATAPACK_RANGED_STAMINA_OVERRIDES.put(itemStack, staminaCost);
