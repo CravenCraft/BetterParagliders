@@ -1,9 +1,11 @@
 package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
+import net.bettercombat.api.MinecraftClient_BetterCombat;
 import net.bettercombat.logic.PlayerAttackProperties;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToServerMsg;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,7 +17,7 @@ import tictim.paraglider.capabilities.PlayerMovement;
 @Mixin(ClientPlayerMovement.class)
 public abstract class ClientPlayerMovementMixin extends PlayerMovement implements PlayerMovementInterface {
     private int totalActionStaminaCost;
-    private int comboCount;
+    private int comboCount = 0;
 
     public ClientPlayerMovementMixin(Player player) {
         super(player);
@@ -23,8 +25,14 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
 
     @Inject(method = "update", at = @At(value = "HEAD"), remap=false)
     public void update(CallbackInfo ci) {
-        calculateMeleeStaminaCost();
-        this.setTotalActionStaminaCost(this.totalActionStaminaCost);
+
+        if (!this.player.isCreative() && !this.player.isSpectator() && this.isDepleted()) {
+            ((MinecraftClient_BetterCombat) Minecraft.getInstance()).cancelUpswing();
+        }
+        else {
+            calculateMeleeStaminaCost();
+            this.setTotalActionStaminaCost(this.totalActionStaminaCost);
+        }
     }
 
     @Override
@@ -42,8 +50,8 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement implement
         this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
 
         if (currentCombo > 0 && currentCombo != this.comboCount) {
-            this.comboCount = currentCombo;
             ModNet.NET.sendToServer(new SyncActionToServerMsg(this.comboCount));
+            this.comboCount = currentCombo;
         }
     }
 }

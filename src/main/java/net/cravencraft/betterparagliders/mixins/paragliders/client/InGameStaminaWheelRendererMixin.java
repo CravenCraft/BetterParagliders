@@ -45,10 +45,8 @@ public abstract class InGameStaminaWheelRendererMixin extends StaminaWheelRender
             }
 
             StaminaWheelRenderer.WheelLevel[] var9 = StaminaWheelRenderer.WheelLevel.values();
-            int var10 = var9.length;
 
-            for(int var11 = 0; var11 < var10; ++var11) {
-                StaminaWheelRenderer.WheelLevel t = var9[var11];
+            for (WheelLevel t : var9) {
                 this.addWheel(t, 0.0, t.getProportion(stamina), color);
             }
         } else {
