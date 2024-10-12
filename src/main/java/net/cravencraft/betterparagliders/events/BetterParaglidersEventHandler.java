@@ -27,6 +27,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.checkerframework.checker.signature.qual.Identifier;
 import tictim.paraglider.capabilities.PlayerMovement;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ public final class BetterParaglidersEventHandler {
     @SubscribeEvent
     public static void loadStaminaOverrides(ServerStartedEvent event) throws IOException {
         ResourceManager resourceManager = event.getServer().getResourceManager();
+      
         for (Map.Entry<ResourceLocation, List<Resource>> resourceLocationListEntry : resourceManager.listResourceStacks("stamina_cost", (fileName) -> fileName.getPath().endsWith(".json")).entrySet()) {
 
             String namespace = resourceLocationListEntry.getKey().getNamespace();
@@ -71,7 +73,6 @@ public final class BetterParaglidersEventHandler {
                 } catch (IllegalStateException e) {
                     BetterParaglidersMod.LOGGER.error("ERROR: " + resourceLocationListEntry.getKey() + ". The JSON object isn't properly configured");
                 }
-
                 staminaReader.close();
             }
         }

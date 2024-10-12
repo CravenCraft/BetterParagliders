@@ -4,6 +4,7 @@ import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
 import net.cravencraft.betterparagliders.network.ModNet;
 import net.cravencraft.betterparagliders.network.SyncActionToClientMsg;
 import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;

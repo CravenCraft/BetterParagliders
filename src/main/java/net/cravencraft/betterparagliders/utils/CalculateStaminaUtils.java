@@ -31,7 +31,7 @@ public class CalculateStaminaUtils {
      * Populates a hashmap that will contain overrides for ranged weapons, melee weapons, and shields.
      */
     public static void addDatapackStaminaOverride(String type, String itemStack, double staminaCost) {
-
+        BetterParaglidersMod.LOGGER.info("ADDING A " + type + " ITEM " + itemStack + " WITH A STAMINA COST OF " + staminaCost);
         switch (type) {
             case "shield" -> DATAPACK_SHIELD_STAMINA_OVERRIDES.put(itemStack, staminaCost);
             case "ranged_weapon" -> DATAPACK_RANGED_STAMINA_OVERRIDES.put(itemStack, staminaCost);
