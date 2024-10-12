@@ -2,12 +2,14 @@ package net.cravencraft.betterparagliders.mixins.paragliders.capabilities;
 
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.capabilities.PlayerMovementInterface;
+import net.cravencraft.betterparagliders.utils.CalculateStaminaUtils;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,7 +25,13 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
     @Shadow private int stamina;
     @Shadow public abstract int getMaxStamina();
     @Shadow @Final public Player player;
+
+    @Shadow public abstract PlayerState getState();
+
     public int totalActionStaminaCost;
+
+    @Unique
+    private String currentPlayerState = "";
 
     @Override
     public int getTotalActionStaminaCost() {
@@ -44,26 +52,7 @@ public abstract class PlayerMovementMixin implements PlayerMovementInterface {
      */
     @Inject(method = "updateStamina", at = @At("HEAD"), cancellable = true, remap = false)
     public void updateStamina(CallbackInfo ci) {
-        int stateChange;
-        switch (this.state) {
-            case IDLE:
-                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.IDLE_STAMINA_REGEN.get()));
-                break;
-            case RUNNING:
-                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SPRINTING_STAMINA_REDUCTION.get()));
-                break;
-            case SWIMMING:
-                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SWIMMING_STAMINA_REDUCTION.get()));
-                break;
-            case UNDERWATER:
-                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get()));
-                break;
-            case BREATHING_UNDERWATER:
-                stateChange = (int) (this.state.change() + player.getAttributeValue(BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get()));
-                break;
-            default:
-                stateChange = this.state.change();
-        }
+        int stateChange = CalculateStaminaUtils.getModifiedStateChange(this.player, this.getState());
         if (this.totalActionStaminaCost != 0 || this.state.isConsume()) {
             this.recoveryDelay = 10;
 
