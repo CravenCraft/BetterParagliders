@@ -59,12 +59,7 @@ public class ModNet {
             LocalPlayer localPlayer = Minecraft.getInstance().player;
             if (localPlayer == null) return;
             BotWStamina botWStamina = (BotWStamina) PlayerMovementProvider.of(localPlayer).stamina();
-            if (localPlayer != null) {
-                ((StaminaOverride) botWStamina).setTotalActionStaminaCost(msg.totalActionStaminaCost());
-            }
-            else {
-                ParagliderMod.LOGGER.error("Couldn't handle packet {}, capability not found", msg);
-            }
+            ((StaminaOverride) botWStamina).setTotalActionStaminaCost(msg.totalActionStaminaCost());
         }
     }
 }

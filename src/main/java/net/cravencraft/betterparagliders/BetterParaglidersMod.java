@@ -40,6 +40,21 @@ public class BetterParaglidersMod
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.SUBMERGED_STAMINA_REGEN.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.WATER_BREATHING_STAMINA_REGEN.get());
 
+        // ParCool Mobility Attributes
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.FAST_RUNNING_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.FAST_SWIMMING_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.CLING_TO_CLIFF_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.HORIZONTAL_WALL_RUN_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.DODGE_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.ROLL_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.BREAKFALL_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.VAULT_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.CLIMB_UP_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.VERTICAL_WALL_RUN_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.CAT_LEAP_STAMINA_REDUCTION.get());
+        event.add(EntityType.PLAYER, BetterParaglidersAttributes.CHARGE_JUMP_STAMINA_REDUCTION.get());
+
+
         // Combat Attributes
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
         event.add(EntityType.PLAYER, BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());

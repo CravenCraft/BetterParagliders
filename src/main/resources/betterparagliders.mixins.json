@@ -6,12 +6,11 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "paragliders.stamina.BotWStaminaMixin",
-    "paragliders.stamina.ServerBotWStaminaMixin",
-    "paragliders.utils.ParagliderUtilsMixin"
+    "paragliders.stamina.ServerBotWStaminaMixin"
   ],
   "client": [
-    "paragliders.client.InGameStaminaWheelRendererMixin",
-    "paragliders.capabilities.ClientPlayerMovementMixin"
+    "paragliders.capabilities.ClientPlayerMovementMixin",
+    "paragliders.client.InGameStaminaWheelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
