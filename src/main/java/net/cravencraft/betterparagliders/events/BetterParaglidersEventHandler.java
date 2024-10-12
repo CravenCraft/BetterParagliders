@@ -1,5 +1,7 @@
 package net.cravencraft.betterparagliders.events;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
@@ -11,11 +13,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -38,76 +44,38 @@ public final class BetterParaglidersEventHandler {
     /**
      * Reads datapacks & saves stamina overrides for items in a Map object, which will be used to override
      * the stamina cost of a weapon when the player attacks in the CalculateStaminaUtils class.
-     *
-     * @param event
-     * @throws IOException
      */
     @SubscribeEvent
     public static void loadStaminaOverrides(ServerStartedEvent event) throws IOException {
         ResourceManager resourceManager = event.getServer().getResourceManager();
+      
+        for (Map.Entry<ResourceLocation, List<Resource>> resourceLocationListEntry : resourceManager.listResourceStacks("stamina_cost", (fileName) -> fileName.getPath().endsWith(".json")).entrySet()) {
 
-        for (ResourceLocation identifier : resourceManager.listResources("stamina_cost", (fileName) -> fileName.endsWith(".json"))) {
-            try {
-                var resource = resourceManager.getResource(identifier);
-                JsonReader staminaReader = new JsonReader(new InputStreamReader(resource.getInputStream()));
-                JsonObject weaponAttributes = JsonParser.parseReader(staminaReader).getAsJsonObject();
+            String namespace = resourceLocationListEntry.getKey().getNamespace();
+            for (Resource resource : resourceLocationListEntry.getValue()) {
+                JsonReader staminaReader = new JsonReader(new InputStreamReader(resource.open()));
+                try {
+                    JsonArray weapons = JsonParser.parseReader(staminaReader).getAsJsonArray();
+                    for (JsonElement weapon : weapons) {
+                        if (weapon.isJsonObject()) {
+                            JsonObject weaponAttributes = weapon.getAsJsonObject();
+                            if (weaponAttributes.has("stamina_cost")) {
+                                String type = (weaponAttributes.has("type")) ? weaponAttributes.get("type").getAsString() : "placeholder";
+                                String itemId = (weaponAttributes.has("name")) ? weaponAttributes.get("name").getAsString() : "placeholder";
+                                double staminaCost = (weaponAttributes.has("stamina_cost")) ? weaponAttributes.get("stamina_cost").getAsDouble() : 0;
 
-                if (weaponAttributes.has("stamina_cost")) {
-                    String type = (weaponAttributes.has("type")) ? weaponAttributes.get("type").getAsString() : "placeholder";
-                    double staminaCost = weaponAttributes.get("stamina_cost").getAsDouble();
-                    String itemId = identifier.toString()
-                            .replace("stamina_cost/", "")
-                            .replace(":", ".")
-                            .replace(".json", "");
+                                itemId = namespace.concat(".").concat(itemId);
 
-                    CalculateStaminaUtils.addDatapackStaminaOverride(type, itemId, staminaCost);
+                                CalculateStaminaUtils.addDatapackStaminaOverride(type, itemId, staminaCost);
+                            }
+                        }
+                    }
+                } catch (IllegalStateException e) {
+                    BetterParaglidersMod.LOGGER.error("ERROR: " + resourceLocationListEntry.getKey() + ". The JSON object isn't properly configured");
                 }
-
-            } catch (Exception e) {
-
+                staminaReader.close();
             }
-//            Map.Entry<ResourceLocation, List<Resource>> entry = (Map.Entry)var3.next();
-//            ResourceLocation identifier = entry.getKey();
-//            for (Resource resource : entry.getValue()) {
-//                JsonReader staminaReader = new JsonReader(new InputStreamReader(resource.getInputStream()));
-//                JsonObject weaponAttributes = JsonParser.parseReader(staminaReader).getAsJsonObject();
-//
-//                if (weaponAttributes.has("stamina_cost")) {
-//                    String type = (weaponAttributes.has("type")) ? weaponAttributes.get("type").getAsString() : "placeholder";
-//                    double staminaCost = weaponAttributes.get("stamina_cost").getAsDouble();
-//                    String itemId = identifier.toString()
-//                            .replace("stamina_cost/", "")
-//                            .replace(":", ".")
-//                            .replace(".json", "");
-//
-//                    CalculateStaminaUtils.addDatapackStaminaOverride(type, itemId, staminaCost);
-//                }
-//
-//                staminaReader.close();
-//            }
         }
-
-//        while (var3.hasNext()) {
-//            Map.Entry<ResourceLocation, List<Resource>> entry = (Map.Entry)var3.next();
-//            ResourceLocation identifier = entry.getKey();
-//            for (Resource resource : entry.getValue()) {
-//                JsonReader staminaReader = new JsonReader(new InputStreamReader(resource.open()));
-//                JsonObject weaponAttributes = JsonParser.parseReader(staminaReader).getAsJsonObject();
-//
-//                if (weaponAttributes.has("stamina_cost")) {
-//                    String type = (weaponAttributes.has("type")) ? weaponAttributes.get("type").getAsString() : "placeholder";
-//                    double staminaCost = weaponAttributes.get("stamina_cost").getAsDouble();
-//                    String itemId = identifier.toString()
-//                            .replace("stamina_cost/", "")
-//                            .replace(":", ".")
-//                            .replace(".json", "");
-//
-//                    CalculateStaminaUtils.addDatapackStaminaOverride(type, itemId, staminaCost);
-//                }
-//
-//                staminaReader.close();
-//            }
-//        }
     }
 
     /**
@@ -132,31 +100,42 @@ public final class BetterParaglidersEventHandler {
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void shieldBlockProjectileEvent(ProjectileImpactEvent event) {
-
-
         if (event.getRayTraceResult() instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof ServerPlayer serverPlayer) {
-            blockEventWork(serverPlayer, (float) ServerConfig.projectileStaminaConsumption());
+            blockEventWork(serverPlayer, (float) ServerConfig.blockProjectileStaminaConsumption());
         }
     }
 
     /**
-     * If the player's stamina is depleted, then cancel the bow/crossbow draw event.
-     *
-     * @param event
+     * Cancels the vanilla attack event if the player is currently out of stamina.
      */
     @SubscribeEvent
-    public static void cancelBowDraw(PlayerInteractEvent event) {
-        if ((event.getItemStack().getItem() instanceof  ProjectileWeaponItem
-                || CalculateStaminaUtils.DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(event.getPlayer().getUseItem().getItem().getDescriptionId().replace("item.", "")))
-                && PlayerMovement.of(event.getEntity()).isDepleted()
-                && !event.getPlayer().isCreative())
-        {
+    public static void cancelVanillaAttack(AttackEntityEvent event) {
+        Player player = event.getEntity();
+        if (event.isCancelable() && event.getTarget() != null && CalculateStaminaUtils.basicPlayerStaminaDepletionChecks(player)) {
+            event.setCanceled(true);
+        }
+    }
 
-            if (CrossbowItem.isCharged(event.getItemStack())) {
-                event.setCanceled(false);
+    /**
+     * If the player's stamina is depleted, then cancel the bow/crossbow draw and the shield block event.
+     */
+    @SubscribeEvent
+    public static void cancelUseItemsRequiringStamina(LivingEntityUseItemEvent event) {
+
+        if (event.getEntity() instanceof Player player && CalculateStaminaUtils.basicPlayerStaminaDepletionChecks(player)) {
+            String itemDescId = player.getUseItem().getItem().getDescriptionId().replace("item.", "");
+
+            if (event.getItem().getItem() instanceof CrossbowItem || CalculateStaminaUtils.DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(itemDescId)) {
+                // Only stop the crossbow if it isn't fully charged.
+                if (!CrossbowItem.isCharged(event.getItem()) && player.isUsingItem()) {
+                    player.stopUsingItem();
+                }
             }
-            else {
-                event.setCanceled(true);
+            else if ((event.getItem().getItem() instanceof BowItem || CalculateStaminaUtils.DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(itemDescId)) && player.isUsingItem()) {
+                player.stopUsingItem();
+            }
+            else if ((event.getItem().getItem() instanceof ShieldItem || CalculateStaminaUtils.DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(itemDescId)) && player.isUsingItem()) {
+                player.stopUsingItem();
             }
         }
     }
@@ -171,7 +150,7 @@ public final class BetterParaglidersEventHandler {
         if (serverPlayer.getUseItem().getItem().getDescriptionId().contains("shield")) {
             PlayerMovement playerMovement = PlayerMovement.of(serverPlayer);
 
-            if (!playerMovement.isDepleted()) {
+            if (playerMovement != null && !playerMovement.isDepleted()) {
                 ((PlayerMovementInterface) playerMovement).calculateBlockStaminaCostServerSide(amount);
             }
         }

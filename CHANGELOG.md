@@ -1,3 +1,22 @@
+## V0.6.0 - Major Bug Fixes, Datapack Rework, Depletion Effects Rework, & ParCool Support
+- Removed support for additional effects when the player runs out of stamina which was causing bugs where
+  the player couldn't receive those effects when they had stamina.
+- The player can no longer attack when out of stamina.
+- Fixed potential bug causing a crash whenever the player tries to draw a bow with depleted stamina.
+- Reworked datapack system. Now each mod will only contain a single json file that uses a json array.
+- Added multiple checks to ensure the game has as little random crashes as possible.
+- Player can no longer perform a vanilla attack when out of stamina.
+- Reworked how depleted stamina works for bows and crossbows. Works more consistently now.
+- Massive rework to how depleted stamina effects blocking. No more cooldown effects. Shield simply won't be able to lift now.
+- Fixed bug causing stamina regen attributes such as idle regen not applying.
+- Fixed bug causing attribute names not work be properly linked to the lang file.
+- Fixed issue #26, which was causing incompatibilities with various mods by resolving attributes via item instead of item stack.
+- Fixed bug that flipped stamina consumption causing dual wielding weapons.
+- Mod now just checks for any attribute modifier attached to the ATTACK_DAMAGE attribute instead of attribute modifiers
+  with certain names. This means full support for mods such as Tetra.
+- Fixed issue #32, which was causing ranged and shields to not be affected by the server config settings.
+  Also, reworked how server config settings are applied to all actions to be a bit more logical.
+
 ## V0.5.0 - The Datapack Update!
 - Datapacks should now be fully supported & use my own standalone system removing the need for mixins.
 - Support for bows via datapacks.
