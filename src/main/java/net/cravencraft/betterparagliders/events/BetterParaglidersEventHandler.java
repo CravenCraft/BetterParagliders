@@ -16,23 +16,19 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.checkerframework.checker.signature.qual.Identifier;
 import tictim.paraglider.capabilities.PlayerMovement;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,33 +44,36 @@ public final class BetterParaglidersEventHandler {
     @SubscribeEvent
     public static void loadStaminaOverrides(ServerStartedEvent event) throws IOException {
         ResourceManager resourceManager = event.getServer().getResourceManager();
-      
-        for (Map.Entry<ResourceLocation, List<Resource>> resourceLocationListEntry : resourceManager.listResourceStacks("stamina_cost", (fileName) -> fileName.getPath().endsWith(".json")).entrySet()) {
 
-            String namespace = resourceLocationListEntry.getKey().getNamespace();
-            for (Resource resource : resourceLocationListEntry.getValue()) {
-                JsonReader staminaReader = new JsonReader(new InputStreamReader(resource.open()));
-                try {
-                    JsonArray weapons = JsonParser.parseReader(staminaReader).getAsJsonArray();
-                    for (JsonElement weapon : weapons) {
-                        if (weapon.isJsonObject()) {
-                            JsonObject weaponAttributes = weapon.getAsJsonObject();
-                            if (weaponAttributes.has("stamina_cost")) {
-                                String type = (weaponAttributes.has("type")) ? weaponAttributes.get("type").getAsString() : "placeholder";
-                                String itemId = (weaponAttributes.has("name")) ? weaponAttributes.get("name").getAsString() : "placeholder";
-                                double staminaCost = (weaponAttributes.has("stamina_cost")) ? weaponAttributes.get("stamina_cost").getAsDouble() : 0;
+        for (ResourceLocation resourceLocation : resourceManager.listResources("stamina_cost", (fileName) -> fileName.endsWith(".json"))) {
+            String namespace = resourceLocation.getNamespace();
+            try {
+                var resource = resourceManager.getResource(resourceLocation);
+                JsonReader staminaReader = new JsonReader(new InputStreamReader(resource.getInputStream()));
+                JsonArray weapons = JsonParser.parseReader(staminaReader).getAsJsonArray();
 
-                                itemId = namespace.concat(".").concat(itemId);
+                for (JsonElement weapon : weapons) {
+                    if (weapon.isJsonObject()) {
+                        JsonObject weaponAttributes = weapon.getAsJsonObject();
+                        String type = (weaponAttributes.has("type")) ? weaponAttributes.get("type").getAsString() : "placeholder";
+                        String itemId = (weaponAttributes.has("name")) ? weaponAttributes.get("name").getAsString() : "placeholder";
+                        double staminaCost = (weaponAttributes.has("stamina_cost")) ? weaponAttributes.get("stamina_cost").getAsDouble() : 0;
+                        itemId = namespace.concat(".").concat(itemId);
 
-                                CalculateStaminaUtils.addDatapackStaminaOverride(type, itemId, staminaCost);
-                            }
-                        }
+                        CalculateStaminaUtils.addDatapackStaminaOverride(type, itemId, staminaCost);
                     }
-                } catch (IllegalStateException e) {
-                    BetterParaglidersMod.LOGGER.error("ERROR: " + resourceLocationListEntry.getKey() + ". The JSON object isn't properly configured");
                 }
+
                 staminaReader.close();
             }
+            catch (NullPointerException e) {
+                BetterParaglidersMod.LOGGER.error("ERROR: {}. The resource location {} does not exist", e.getMessage(), resourceLocation);
+            }
+            catch (IllegalStateException e) {
+                BetterParaglidersMod.LOGGER.error("ERROR: {}. The JSON object for the resource {} isn't properly configured", e.getMessage(), resourceLocation);
+            }
+
+
         }
     }
 
@@ -110,7 +109,7 @@ public final class BetterParaglidersEventHandler {
      */
     @SubscribeEvent
     public static void cancelVanillaAttack(AttackEntityEvent event) {
-        Player player = event.getEntity();
+        Player player = event.getPlayer();
         if (event.isCancelable() && event.getTarget() != null && CalculateStaminaUtils.basicPlayerStaminaDepletionChecks(player)) {
             event.setCanceled(true);
         }

@@ -1,12 +1,8 @@
 package net.cravencraft.betterparagliders.config;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
-
-import java.util.Collections;
-import java.util.List;
 
 public class ServerConfig {
     private static ForgeConfigSpec.DoubleValue MELEE_STAMINA_CONSUMPTION;
