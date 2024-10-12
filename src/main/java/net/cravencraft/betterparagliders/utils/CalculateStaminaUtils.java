@@ -16,7 +16,6 @@ import tictim.paraglider.impl.movement.PlayerMovement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class CalculateStaminaUtils {
 
@@ -25,9 +24,6 @@ public class CalculateStaminaUtils {
     public static Map<String, Double> DATAPACK_SHIELD_STAMINA_OVERRIDES = new HashMap<>();
 
     public static final List<String> ADDITIONAL_STAMINA_COST_MOVEMENT_STATES = List.of("dodge", "breakfall", "roll", "vault", "climb_up", "cling_to_cliff", "vertical_wall_run", "cat_leap", "charge_jump");
-
-    private static final int BASE_RANGE_STAMINA_COST = 10;
-    private static final int BASE_BLOCK_STAMINA_COST = 10;
 
     /**
      * Populates a hashmap that will contain overrides for ranged weapons, melee weapons, and shields.
