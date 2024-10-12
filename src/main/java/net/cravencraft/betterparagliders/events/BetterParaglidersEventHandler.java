@@ -95,7 +95,7 @@ public final class BetterParaglidersEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void shieldBlockProjectileEvent(ProjectileImpactEvent event) {
         if (event.getRayTraceResult() instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() instanceof ServerPlayer serverPlayer) {
-            blockEventWork(serverPlayer, (float) ServerConfig.projectileStaminaConsumption());
+            blockEventWork(serverPlayer, (float) ServerConfig.blockProjectileStaminaConsumption());
         }
     }
 

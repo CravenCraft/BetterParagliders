@@ -16,6 +16,7 @@ import tictim.paraglider.impl.movement.PlayerMovement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CalculateStaminaUtils {
 
@@ -25,7 +26,8 @@ public class CalculateStaminaUtils {
 
     public static final List<String> ADDITIONAL_STAMINA_COST_MOVEMENT_STATES = List.of("dodge", "breakfall", "roll", "vault", "climb_up", "cling_to_cliff", "vertical_wall_run", "cat_leap", "charge_jump");
 
-    private static final int baseRangeStaminaCost = 10;
+    private static final int BASE_RANGE_STAMINA_COST = 10;
+    private static final int BASE_BLOCK_STAMINA_COST = 10;
 
     /**
      * Populates a hashmap that will contain overrides for ranged weapons, melee weapons, and shields.
@@ -44,20 +46,14 @@ public class CalculateStaminaUtils {
      * As well, attributes and the config can determine how much stamina is drained.
      */
     public static int calculateMeleeStaminaCost(Player player, int currentCombo) {
-        double totalStaminaDrain;
+        double totalStaminaConsumption;
         AttackHand attackHand = PlayerAttackHelper.getCurrentAttack(player, currentCombo);
         boolean isTwoHanded = attackHand.attributes().isTwoHanded();
         String attackingItemId = attackHand.itemStack().getItem().getDescriptionId().replace("item.", "");
 
         if (DATAPACK_MELEE_STAMINA_OVERRIDES.containsKey(attackingItemId)) {
-            totalStaminaDrain = DATAPACK_MELEE_STAMINA_OVERRIDES.get(attackingItemId).intValue();
+            totalStaminaConsumption = DATAPACK_MELEE_STAMINA_OVERRIDES.get(attackingItemId).intValue() * ServerConfig.meleeStaminaConsumption();
 
-            if (isTwoHanded) {
-                totalStaminaDrain -= player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
-            }
-            else {
-                totalStaminaDrain -= player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
-            }
         }
         else {
             double weaponAttackDamage = 0;
@@ -70,22 +66,23 @@ public class CalculateStaminaUtils {
                 }
             }
             catch (NullPointerException e) {
-                BetterParaglidersMod.LOGGER.info("Error: {} in retrieving attack damage attributes.", e.getMessage());
+                BetterParaglidersMod.LOGGER.error("Error: {} in retrieving attack damage attributes.", e.getMessage());
             }
 
-            totalStaminaDrain = (weaponAttackDamage + reachFactor) * ServerConfig.meleeStaminaConsumption();
+            totalStaminaConsumption = (weaponAttackDamage + reachFactor) * ServerConfig.meleeStaminaConsumption();
 
-            if (isTwoHanded) {
-                totalStaminaDrain = (totalStaminaDrain * ServerConfig.twoHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
-            }
-            else {
-                totalStaminaDrain = (totalStaminaDrain * ServerConfig.oneHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
-            }
         }
 
-        totalStaminaDrain -= player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
+        if (isTwoHanded) {
+            totalStaminaConsumption = (totalStaminaConsumption * ServerConfig.twoHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.TWO_HANDED_STAMINA_REDUCTION.get());
+        }
+        else {
+            totalStaminaConsumption = (totalStaminaConsumption * ServerConfig.oneHandedStaminaConsumption()) - player.getAttributeValue(BetterParaglidersAttributes.ONE_HANDED_STAMINA_REDUCTION.get());
+        }
 
-        return (int) Math.ceil(totalStaminaDrain);
+        totalStaminaConsumption -= player.getAttributeValue(BetterParaglidersAttributes.BASE_MELEE_STAMINA_REDUCTION.get());
+
+        return (int) Math.ceil(totalStaminaConsumption);
     }
 
     /**
@@ -93,14 +90,13 @@ public class CalculateStaminaUtils {
      * or based on a datapack value overriding that amount.
      */
     public static int calculateRangeStaminaCost(Player player) {
-        int totalStaminaConsumption;
+        double totalStaminaConsumption = ServerConfig.rangeStaminaConsumption();
         String bowItem = player.getUseItem().getItem().getDescriptionId().replace("item.", "");
+
         if (DATAPACK_RANGED_STAMINA_OVERRIDES.containsKey(bowItem)) {
-            totalStaminaConsumption = DATAPACK_RANGED_STAMINA_OVERRIDES.get(bowItem).intValue();
+            totalStaminaConsumption += DATAPACK_RANGED_STAMINA_OVERRIDES.get(bowItem).intValue();
         }
-        else {
-            totalStaminaConsumption = (int) (baseRangeStaminaCost * ServerConfig.rangeStaminaConsumption());
-        }
+
         return (int) (totalStaminaConsumption - player.getAttributeValue(BetterParaglidersAttributes.RANGE_STAMINA_REDUCTION.get()));
     }
 
@@ -109,14 +105,11 @@ public class CalculateStaminaUtils {
      * or based on a datapack value overriding that amount.
      */
     public static int calculateBlockStaminaCost(Player player, float blockedDamage) {
-        int totalStaminaConsumption = (int) blockedDamage;
+        int totalStaminaConsumption = (int) (ServerConfig.blockStaminaConsumption() + blockedDamage);
         String shieldItem = player.getUseItem().getItem().getDescriptionId().replace("item.", "");
 
         if (DATAPACK_SHIELD_STAMINA_OVERRIDES.containsKey(shieldItem)) {
             totalStaminaConsumption += DATAPACK_SHIELD_STAMINA_OVERRIDES.get(shieldItem).intValue();
-        }
-        else {
-            totalStaminaConsumption += (int) (ServerConfig.blockStaminaConsumption());
         }
 
         return Math.round((float)(totalStaminaConsumption - player.getAttributeValue(BetterParaglidersAttributes.BLOCK_STAMINA_REDUCTION.get())));

@@ -16,6 +16,8 @@
 - Fixed bug that flipped stamina consumption causing dual wielding weapons.
 - Mod now just checks for any attribute modifier attached to the ATTACK_DAMAGE attribute instead of attribute modifiers 
   with certain names. This means full support for mods such as Tetra.
+- Fixed issue #32, which was causing ranged and shields to not be affected by the server config settings.
+  Also, reworked how server config settings are applied to all actions to be a bit more logical.
 
 ## V0.5.3 - Better Combat Version Update
 - Bumped the Better Combat version up to the latest 1.8.5 version.

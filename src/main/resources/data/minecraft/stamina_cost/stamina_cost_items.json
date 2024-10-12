@@ -2,12 +2,12 @@
   {
     "type": "ranged_weapon",
     "name": "bow",
-    "stamina_cost": 10
+    "stamina_cost": 3
   },
   {
     "type": "ranged_weapon",
     "name": "crossbow",
-    "stamina_cost": 12
+    "stamina_cost": 5
   },
   {
     "type": "shield",
