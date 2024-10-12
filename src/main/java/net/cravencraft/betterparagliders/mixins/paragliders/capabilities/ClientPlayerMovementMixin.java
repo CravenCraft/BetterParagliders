@@ -19,7 +19,7 @@ import tictim.paraglider.impl.movement.PlayerMovement;
 public abstract class ClientPlayerMovementMixin extends PlayerMovement {
     @Shadow public abstract Player player();
     @Unique
-    private int comboCount;
+    private int comboCount = 0;
 
     public ClientPlayerMovementMixin(Player player) {
         super(player);
@@ -30,7 +30,7 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement {
         calculateMeleeStaminaCost();
 
         // Cancels the Better Combat attack if the player is out of stamina.
-        if (this.stamina().isDepleted()) {
+        if (!this.player().isCreative() && !this.player().isSpectator() && this.stamina().isDepleted()) {
             ((MinecraftClient_BetterCombat) Minecraft.getInstance()).cancelUpswing();
         }
     }
@@ -45,8 +45,8 @@ public abstract class ClientPlayerMovementMixin extends PlayerMovement {
         this.comboCount = (currentCombo == 0) ? currentCombo : this.comboCount;
 
         if (currentCombo > 0 && currentCombo != this.comboCount) {
-            this.comboCount = currentCombo;
             ModNet.NET.sendToServer(new SyncActionToServerMsg(this.comboCount));
+            this.comboCount = currentCombo;
         }
     }
 }

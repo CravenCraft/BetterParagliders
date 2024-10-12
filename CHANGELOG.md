@@ -12,6 +12,10 @@
 - Fixed bug causing stamina regen attributes such as idle regen not applying.
 - Fixed bug causing attribute names not work be properly linked to the lang file.
 - Fixed minor visual bug causing replenished wheel to remain white for too long before disappearing.
+- Fixed issue #26, which was causing incompatibilities with various mods by resolving attributes via item instead of item stack.
+- Fixed bug that flipped stamina consumption causing dual wielding weapons.
+- Mod now just checks for any attribute modifier attached to the ATTACK_DAMAGE attribute instead of attribute modifiers 
+  with certain names. This means full support for mods such as Tetra.
 
 ## V0.5.3 - Better Combat Version Update
 - Bumped the Better Combat version up to the latest 1.8.5 version.

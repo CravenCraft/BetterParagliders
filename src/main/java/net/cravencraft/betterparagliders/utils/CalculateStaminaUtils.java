@@ -1,10 +1,14 @@
 package net.cravencraft.betterparagliders.utils;
 
+import com.google.common.collect.Multimap;
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.PlayerAttackHelper;
+import net.cravencraft.betterparagliders.BetterParaglidersMod;
 import net.cravencraft.betterparagliders.attributes.BetterParaglidersAttributes;
 import net.cravencraft.betterparagliders.config.ServerConfig;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import tictim.paraglider.impl.movement.PlayerMovement;
@@ -36,15 +40,8 @@ public class CalculateStaminaUtils {
     }
 
     /**
-     * TODO: Integrate support for ranged weapons as well.
-     * TODO: Test on a server.
-     *
      * Drains stamina based on the player's weapon. It's damage, tier, and reach.
      * As well, attributes and the config can determine how much stamina is drained.
-     *
-     * @param player
-     * @param currentCombo
-     * @return
      */
     public static int calculateMeleeStaminaCost(Player player, int currentCombo) {
         double totalStaminaDrain;
@@ -63,13 +60,18 @@ public class CalculateStaminaUtils {
             }
         }
         else {
+            double weaponAttackDamage = 0;
             double reachFactor = attackHand.attributes().attackRange();
 
-
-            double weaponAttackDamage = attackHand.itemStack().getItem().getAttributeModifiers(EquipmentSlot.MAINHAND, attackHand.itemStack())
-                    .get(Attributes.ATTACK_DAMAGE).stream()
-                    .filter(attributeModifier -> attributeModifier.getName().contains("Weapon") || attributeModifier.getName().contains("Tool"))
-                    .findFirst().get().getAmount();
+            Multimap<Attribute, AttributeModifier> itemStackAttributes = attackHand.itemStack().getAttributeModifiers(EquipmentSlot.MAINHAND);
+            try {
+                for (AttributeModifier attributeModifier : itemStackAttributes.get(Attributes.ATTACK_DAMAGE)) {
+                    weaponAttackDamage += attributeModifier.getAmount();
+                }
+            }
+            catch (NullPointerException e) {
+                BetterParaglidersMod.LOGGER.info("Error: {} in retrieving attack damage attributes.", e.getMessage());
+            }
 
             totalStaminaDrain = (weaponAttackDamage + reachFactor) * ServerConfig.meleeStaminaConsumption();
 
@@ -89,9 +91,6 @@ public class CalculateStaminaUtils {
     /**
      * Will drain stamina based on the amount either the default configured amount for the bow being used,
      * or based on a datapack value overriding that amount.
-     *
-     * @param player
-     * @return
      */
     public static int calculateRangeStaminaCost(Player player) {
         int totalStaminaConsumption;
